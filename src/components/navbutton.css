@@ -1,0 +1,83 @@
+/* Custom styles for the previous button */
+.swiper-button-prev {
+    background-color: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: none; /* No shadow by default */
+}
+
+.swiper-button-prev:hover {
+    width: 35px;
+    height: 35px;
+    background-color: #f7fafc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow similar to shadow-md */
+}
+
+/* Style for SVG inside the button */
+.swiper-button-prev svg {
+    width: 20px;
+    height: 20px;
+    color: #4a5568;
+    transition: color 0.3s ease;
+}
+
+.swiper-button-prev:hover svg {
+    width: 24px;
+    height: 24px;
+    color: #2d3748;
+}
+
+/* Custom styles for the next button */
+.swiper-button-next {
+    background-color: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: none; /* No shadow by default */
+}
+
+.swiper-button-next:hover {
+    width: 35px;
+    height: 35px;
+    background-color: #f7fafc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow similar to shadow-md */
+}
+
+/* Style for SVG inside the button */
+.swiper-button-next svg {
+    width: 20px;
+    height: 20px;
+    color: #4a5568;
+    transition: color 0.3s ease;
+}
+
+.swiper-button-next:hover svg {
+    width: 24px;
+    height: 24px;
+    color: #2d3748;
+}
+
+/* Hide Swiper's default icons */
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    display: none; /* Hide Swiper's default icons */
+}
+
+/* Hide buttons when disabled */
+.swiper-button-prev.swiper-button-disabled,
+.swiper-button-next.swiper-button-disabled {
+    display: none;
+}
