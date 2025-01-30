@@ -1,0 +1,17 @@
+/* Custom styles for pagination bullets */
+.swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: #ccc;
+    opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+    background: #FFFFFF !important; /* Your requested color */
+    opacity: 1;
+}
+
+/* Optional: Add transition for smooth color change */
+.swiper-pagination-bullet {
+    transition: background-color 0.3s ease;
+}

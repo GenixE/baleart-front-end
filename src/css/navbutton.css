@@ -3,14 +3,18 @@
     background-color: #ffffff;
     border: 2px solid #ccc;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 30px !important; /* Added !important to override Swiper's default styles */
+    height: 30px !important; /* Added !important to override Swiper's default styles */
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: none; /* No shadow by default */
+    box-shadow: none;
+    margin: 0 !important; /* Added to override Swiper's default margins */
+    position: absolute; /* Ensure proper positioning */
+    top: 50% !important; /* Center vertically */
+    transform: translateY(-50%) !important; /* Center vertically */
 }
 
 .swiper-button-prev:hover {
@@ -39,14 +43,18 @@
     background-color: #ffffff;
     border: 2px solid #ccc;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 30px !important; /* Added !important to override Swiper's default styles */
+    height: 30px !important; /* Added !important to override Swiper's default styles */
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: none; /* No shadow by default */
+    box-shadow: none;
+    margin: 0 !important; /* Added to override Swiper's default margins */
+    position: absolute; /* Ensure proper positioning */
+    top: 50% !important; /* Center vertically */
+    transform: translateY(-50%) !important; /* Center vertically */
 }
 
 .swiper-button-next:hover {

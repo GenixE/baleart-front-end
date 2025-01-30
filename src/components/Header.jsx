@@ -74,7 +74,7 @@ export const Header = () => {
                             </button>
                             {isLanguageDropdownOpen && (
                                 <div
-                                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
+                                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                     <a href="/lang/en"
                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100">English</a>
                                     <a href="/lang/es"
@@ -104,7 +104,7 @@ export const Header = () => {
                             </button>
                             {isUserDropdownOpen && (
                                 <div
-                                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
+                                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                     <a href="/profile"
                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
                                     <a href="/settings"
