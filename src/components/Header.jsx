@@ -33,14 +33,19 @@ export const Header = () => {
 
     return (
         <>
-            <header className="bg-white shadow-xs">
-                <div className="mx-20 p-4">
+            <header className="bg-white shadow-xs sticky top-0 z-50">
+                {/*
+                  Use responsive margin (mx) and padding (p) classes to adjust spacing as screen size changes
+                  e.g., sm:mx-4, md:mx-8, xl:mx-20
+                */}
+                <div className="mx-4 sm:mx-8 md:mx-16 xl:mx-20 p-4">
                     <div className="container mx-auto flex justify-between items-center">
-                        {/* Logo */}
-                        <a href="/"><img src="/baleart.svg" alt="baleart" className="w-45 h-15 pr-2"/></a>
+                        <a href="/">
+                            <img src="/baleart.svg" alt="baleart" className="w-32 sm:w-40 md:w-45 h-15 pr-2"/>
+                        </a>
 
                         {/* Search bar */}
-                        <div className="w-128 mx-auto">
+                        <div className="w-64 sm:w-80 md:w-96 mx-auto">
                             <div className="relative">
                                 <input
                                     type="text"
@@ -109,14 +114,15 @@ export const Header = () => {
                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
                                     <a href="/settings"
                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
-                                    <a href="/logout" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
+                                    <a href="/logout"
+                                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
+                <Filter/>
             </header>
-            <Filter/>
         </>
     );
 };
