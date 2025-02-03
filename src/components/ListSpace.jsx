@@ -1,11 +1,13 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Card from './Card';
 
 function ListSpace() {
     const [spaces, setSpaces] = useState([]);
     const [imagesData, setImagesData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [visibleCount, setVisibleCount] = useState(8);  // Show 8 cards by default
+    const [visibleCount, setVisibleCount] = useState(8); // Show 8 cards by default
+    const [isLoadingMore, setIsLoadingMore] = useState(false); // Track loading state for "Load More"
+    const sentinelRef = useRef(null); // Ref for the sentinel element
 
     useEffect(() => {
         // Fetch space info from the API
@@ -43,7 +45,7 @@ function ListSpace() {
                                 images: imageUrls,
                                 title: space.name,
                                 description: combinedDescription,
-                                rating: rating
+                                rating: rating,
                             };
                         });
 
@@ -57,10 +59,36 @@ function ListSpace() {
             });
     }, []);
 
-    // Function to load 4 more cards
+    // Load 4 more cards
     const loadMore = () => {
-        setVisibleCount((prevCount) => prevCount + 4);
+        setIsLoadingMore(true); // Show loader
+        setTimeout(() => {
+            setVisibleCount((prevCount) => prevCount + 4);
+            setIsLoadingMore(false); // Hide loader
+        }, 1000); // Simulate a delay for loading (1 second)
     };
+
+    // Intersection Observer to detect when the sentinel is in view
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && visibleCount < spaces.length) {
+                    loadMore(); // Load more cards when sentinel is in view
+                }
+            },
+            { threshold: 1.0 } // Trigger when the sentinel is fully visible
+        );
+
+        if (sentinelRef.current) {
+            observer.observe(sentinelRef.current); // Observe the sentinel element
+        }
+
+        return () => {
+            if (sentinelRef.current) {
+                observer.unobserve(sentinelRef.current); // Cleanup observer
+            }
+        };
+    }, [visibleCount, spaces.length]); // Re-run when visibleCount or spaces.length changes
 
     if (loading) {
         return (
@@ -72,12 +100,12 @@ function ListSpace() {
                 <span></span>
                 <span></span>
             </div>
-        )
+        );
     }
 
     return (
         <div className="flex flex-col items-center w-full mt-4">
-            {/* Grid with 8 (or more) visible items */}
+            {/* Grid with visible items */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
                 {spaces.slice(0, visibleCount).map((item) => (
                     <Card
@@ -90,14 +118,19 @@ function ListSpace() {
                 ))}
             </div>
 
-            {/* Show 'Load More' only if there are more items to display */}
-            {visibleCount < spaces.length && (
-                <button
-                    className="mt-6 mb-6 px-4 py-2 bg-[#149d80] text-white rounded hover:bg-[#128a70]"
-                    onClick={loadMore}
-                >
-                    Load More
-                </button>
+            {/* Sentinel element to trigger loading more cards */}
+            <div ref={sentinelRef} className="h-10"></div>
+
+            {/* Show loader when loading more cards */}
+            {isLoadingMore && (
+                <div className="loader mt-6 mb-6">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             )}
         </div>
     );

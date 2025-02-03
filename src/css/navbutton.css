@@ -78,10 +78,10 @@
     color: #2d3748;
 }
 
-/* Hide Swiper's default icons */
+/* Hide Swiper's default spaceTypeIcons */
 .swiper-button-next::after,
 .swiper-button-prev::after {
-    display: none; /* Hide Swiper's default icons */
+    display: none; /* Hide Swiper's default spaceTypeIcons */
 }
 
 /* Hide buttons when disabled */

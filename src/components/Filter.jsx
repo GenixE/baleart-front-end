@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+// Filter.jsx
+import {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-import icons from '../icons/Icons.jsx';
-import { Modal } from './Modal'; // Import the Modal component
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Navigation, Pagination} from 'swiper/modules';
+import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
+import {Modal} from './Modal';
 
 export const Filter = () => {
     const [spaceTypes, setSpaceTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sliderValue, setSliderValue] = useState([0, 5]);
 
     useEffect(() => {
         const fetchSpaceTypes = async () => {
@@ -42,26 +44,13 @@ export const Filter = () => {
                     <Swiper
                         modules={[Navigation, Pagination]}
                         breakpoints={{
-                            320: {
-                                slidesPerView: 3,
-                            },
-                            480: {
-                                slidesPerView: 5,
-                            },
-                            720: {
-                                slidesPerView: 8,
-                            },
-                            1000: {
-                                slidesPerView: 12,
-                            },
-                            2000: {
-                                slidesPerView: 15,
-                            },
+                            320: {slidesPerView: 3},
+                            480: {slidesPerView: 5},
+                            720: {slidesPerView: 8},
+                            1000: {slidesPerView: 12},
+                            2000: {slidesPerView: 15},
                         }}
-                        navigation={{
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev',
-                        }}
+                        navigation={{nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev'}}
                         className="mySwiper"
                     >
                         <div className="swiper-button-prev">
@@ -84,10 +73,12 @@ export const Filter = () => {
                                     }}
                                 >
                                     <div className="transition-transform duration-200 hover:scale-110">
-                                        {icons[type.description_EN] || (
+                                        {spaceTypeIcons[type.id] || (
                                             <svg viewBox="0 0 50 50" className="size-6">
-                                                <path fill="currentColor"
-                                                      d="M25 5L5 15v2h40v-2L25 5zm-16 13h32v20H9zm-4 22h40v2H5z"/>
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M25 5L5 15v2h40v-2L25 5zm-16 13h32v20H9zm-4 22h40v2H5z"
+                                                />
                                             </svg>
                                         )}
                                     </div>
@@ -113,17 +104,20 @@ export const Filter = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                          stroke="currentColor" className="size-5">
                         <path strokeLinecap="round" strokeLinejoin="round"
-                              d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/>
+                              d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                        />
                     </svg>
                     <span>Filters</span>
                 </button>
             </div>
 
-            {/* Use the Modal component */}
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <h2 className="text-lg font-semibold mb-4">Filters</h2>
-                <p>This is where your filter options will go.</p>
-            </Modal>
+            {/* Use the Modal component without children */}
+            <Modal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                sliderValue={sliderValue}
+                setSliderValue={setSliderValue}
+            />
         </div>
     );
 };
