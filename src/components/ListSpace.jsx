@@ -1,26 +1,21 @@
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
+import {useSearch} from '../contexts/SearchContext';
 import Card from './Card';
 
 function ListSpace() {
+    const {searchQuery, selectedIsland} = useSearch();
     const [spaces, setSpaces] = useState([]);
-    const [imagesData, setImagesData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount()); // Dynamic initial count
-    const [isLoadingMore, setIsLoadingMore] = useState(false); // Track loading state for "Load More"
-    const sentinelRef = useRef(null); // Ref for the sentinel element
+    const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const sentinelRef = useRef(null);
 
-    // Function to get the initial visible count based on screen size
     function getInitialVisibleCount() {
         const screenWidth = window.innerWidth;
-        if (screenWidth >= 1536) { // 2xl screens
-            return 12;
-        } else if (screenWidth >= 1280) { // xl screens
-            return 8;
-        } else if (screenWidth >= 768) { // md screens
-            return 6;
-        } else { // sm screens
-            return 4;
-        }
+        if (screenWidth >= 1536) return 12;
+        if (screenWidth >= 1280) return 8;
+        if (screenWidth >= 768) return 6;
+        return 4;
     }
 
     // Function to get the number of cards to load based on screen size
@@ -37,56 +32,78 @@ function ListSpace() {
         }
     }
 
+    // Fetch spaces based on search query and island filter
     useEffect(() => {
-        // Fetch space info from the API
-        fetch('http://localhost:8000/api/spaces')
-            .then((response) => response.json())
-            .then((apiData) => {
-                // Fetch images from the local JSON file
-                return fetch('./spaces.json')
-                    .then((res) => res.json())
-                    .then((jsonImages) => {
-                        setImagesData(jsonImages);
+        const fetchSpaces = async () => {
+            setLoading(true);
+            try {
+                let data;
 
-                        // Combine API data with image URLs by matching 'reg_number' <-> 'registre'
-                        const mergedData = apiData.data.map((space) => {
-                            const matchingImages = jsonImages.filter(
-                                (img) => img.registre === space.reg_number
-                            );
+                // Always fetch based on island filter first
+                const spacesUrl = selectedIsland === 'all'
+                    ? 'http://localhost:8000/api/spaces'
+                    : `http://localhost:8000/api/spaces?island_id=${selectedIsland}`;
+                const spacesResponse = await fetch(spacesUrl);
+                const spacesResult = await spacesResponse.json();
+                data = spacesResult.data;
 
-                            // Build an array of image URLs
-                            const imageUrls = matchingImages.map((entry) => entry.image);
+                // If there's a search query, filter the island-filtered results
+                if (searchQuery.trim()) {
+                    // Make the search request
+                    const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
+                    const searchResults = await searchResponse.json();
 
-                            // Calculate rating
-                            let rating = 0;
-                            if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
-                                rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
-                            }
+                    // Only keep spaces that exist in both the island filter and search results
+                    data = data.filter(spaceFromIsland =>
+                        searchResults.some(searchSpace => searchSpace.id === spaceFromIsland.id)
+                    );
+                }
 
-                            // Build description from zone + municipality
-                            const zoneName = space.address?.zone?.name || '';
-                            const municipalityName = space.address?.municipality?.name || '';
-                            const combinedDescription = `${zoneName} - ${municipalityName}`;
+                // Fetch images
+                const jsonResponse = await fetch('./spaces.json');
+                const jsonImages = await jsonResponse.json();
 
-                            return {
-                                id: space.id,
-                                images: imageUrls,
-                                title: space.name,
-                                description: combinedDescription,
-                                rating: rating,
-                            };
-                        });
+                // Merge the data with images
+                const mergedData = data.map((space) => {
+                    const matchingImages = jsonImages.filter(
+                        (img) => img.registre === space.reg_number
+                    );
 
-                        setSpaces(mergedData);
-                        setLoading(false);
-                    });
-            })
-            .catch((error) => {
+                    const imageUrls = matchingImages.map((entry) => entry.image);
+
+                    let rating = 0;
+                    if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
+                        rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
+                    }
+
+                    const zoneName = space.address?.zone?.name || '';
+                    const municipalityName = space.address?.municipality?.name || '';
+                    const combinedDescription = `${zoneName} - ${municipalityName}`;
+
+                    return {
+                        id: space.id,
+                        images: imageUrls,
+                        title: space.name,
+                        description: combinedDescription,
+                        rating: rating,
+                    };
+                });
+
+                setSpaces(mergedData);
+            } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
                 setLoading(false);
-            });
-    }, []);
+            }
+        };
 
+        // Add debouncing for search queries
+        const timeoutId = setTimeout(() => {
+            fetchSpaces();
+        }, 300); // 300ms delay
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery, selectedIsland]);
     // Load more cards dynamically based on screen size
     const loadMore = () => {
         setIsLoadingMore(true); // Show loader
@@ -134,25 +151,9 @@ function ListSpace() {
 
     return (
         <div className="flex flex-col items-center w-full mt-4">
-            {/* Grid with visible items */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
-                {spaces.slice(0, visibleCount).map((item) => (
-                    <Card
-                        key={item.id}
-                        images={item.images}
-                        title={item.title}
-                        description={item.description}
-                        rating={item.rating}
-                    />
-                ))}
-            </div>
-
-            {/* Sentinel element to trigger loading more cards */}
-            <div ref={sentinelRef} className="h-10"></div>
-
-            {/* Show loader when loading more cards */}
-            {isLoadingMore && (
-                <div className="loader mt-6 mb-6">
+            {/* Show loading state */}
+            {loading && (
+                <div className="loader">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -160,6 +161,66 @@ function ListSpace() {
                     <span></span>
                     <span></span>
                 </div>
+            )}
+            {/* Show no results message */}
+            {!loading && spaces.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-8">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-16 w-16 text-gray-400 mb-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                    <p className="text-xl text-gray-600 font-semibold mb-2">No spaces found</p>
+                    <p className="text-gray-500">
+                        {searchQuery
+                            ? `No results found for "${searchQuery}"${selectedIsland !== 'all' ? ' in this island' : ''}`
+                            : 'No spaces available for the selected filters'}
+                    </p>
+                </div>
+            )}
+
+            {/* Show results if we have any */}
+            {!loading && spaces.length > 0 && (
+                <>
+                    <div
+                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
+                        {spaces.slice(0, visibleCount).map((item) => (
+                            <Card
+                                key={item.id}
+                                images={item.images}
+                                title={item.title}
+                                description={item.description}
+                                rating={item.rating}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Sentinel element for infinite scroll */}
+                    {spaces.length > visibleCount && (
+                        <div ref={sentinelRef} className="h-10"></div>
+                    )}
+
+                    {/* Loading more indicator */}
+                    {isLoadingMore && (
+                        <div className="loader mt-6 mb-6">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

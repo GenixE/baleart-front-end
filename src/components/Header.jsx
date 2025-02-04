@@ -1,7 +1,9 @@
 import {useEffect, useRef, useState} from 'react';
+import {useSearch} from '../contexts/SearchContext';
 import {Filter} from "./Filter.jsx";
 
 export const Header = () => {
+    const {searchQuery, setSearchQuery, selectedIsland, setSelectedIsland} = useSearch();
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
     const userDropdownRef = useRef(null);
@@ -45,6 +47,18 @@ export const Header = () => {
         fetchIslands();
     }, []);
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleIslandChange = (e) => {
+        setSelectedIsland(e.target.value);
+    };
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+    };
+
     return (
         <>
             <header className="bg-white shadow-xs sticky top-0 z-50">
@@ -60,58 +74,44 @@ export const Header = () => {
 
                         {/* Middle: Search bar with dropdown */}
                         <div className="flex-grow mx-4">
-                            <div className="relative w-full flex items-center">
-                                {/* Dropdown */}
-                                <div className="relative flex-shrink-0">
-                                    <select
-                                        className="appearance-none bg-white border border-gray-300 shadow-sm rounded-l-full py-3 pl-6 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 h-12"
-                                    >
-                                        <option value="all">All</option>
-                                        {islands.map((island) => (
-                                            <option key={island.id} value={island.id}>{island.name}</option>
-                                        ))}
-                                    </select>
-                                    {/* Dropdown arrow */}
-                                    <div
-                                        className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                        <svg
-                                            className="fill-current h-4 w-4"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20"
+                            <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center">
+                                <div className="relative w-full flex items-center">
+                                    {/* Dropdown */}
+                                    <div className="relative flex-shrink-0">
+                                        <select
+                                            value={selectedIsland}
+                                            onChange={handleIslandChange}
+                                            className="appearance-none bg-white border border-gray-300 shadow-sm rounded-l-full py-3 pl-6 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 h-12"
                                         >
-                                            <path
-                                                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                                        </svg>
+                                            <option value="all">All</option>
+                                            {islands.map((island) => (
+                                                <option key={island.id} value={island.id}>{island.name}</option>
+                                            ))}
+                                        </select>
+                                        {/* Dropdown arrow */}
+                                        <div
+                                            className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                            <svg
+                                                className="fill-current h-4 w-4"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                                            </svg>
+                                        </div>
                                     </div>
+
+                                    {/* Search input */}
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={handleSearchChange}
+                                        placeholder="Search"
+                                        className="flex-grow py-3 pl-6 pr-12 rounded-r-full border border-gray-300 shadow-sm focus:outline-none focus:border-gray-500 h-12"
+                                    />
                                 </div>
-
-                                {/* Search input */}
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    className="flex-grow py-3 pl-6 pr-12 rounded-r-full border border-gray-300 shadow-sm focus:outline-none focus:border-gray-500 h-12"
-                                />
-
-                                {/* Search button */}
-                                <button
-                                    className="absolute right-0 top-0 bottom-0 my-auto mr-1 flex items-center justify-center">
-                                    <div className="flex items-center justify-center rounded-full">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            fill="#149d80"
-                                            className="size-10"
-                                        >
-                                            <path d="M8.25 10.875a2.625 2.625 0 1 1 5.25 0 2.625 2.625 0 0 1-5.25 0Z"/>
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.125 4.5a4.125 4.125 0 1 0 2.338 7.524l2.007 2.006a.75.75 0 1 0 1.06-1.06l-2.006-2.007a4.125 4.125 0 0 0-3.399-6.463Z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </div>
-                                </button>
-                            </div>
+                            </form>
                         </div>
 
                         {/* Right: Languages and User options */}
