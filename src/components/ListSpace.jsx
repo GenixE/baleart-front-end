@@ -1,9 +1,17 @@
-import {useEffect, useRef, useState} from 'react';
-import {useSearch} from '../contexts/SearchContext';
+import { useEffect, useRef, useState } from 'react';
+import { useSearch } from '../contexts/SearchContext';
 import Card from './Card';
 
 function ListSpace() {
-    const {searchQuery, selectedIsland, selectedSpaceTypes} = useSearch();
+    const {
+        searchQuery,
+        selectedIsland,
+        selectedSpaceTypes,
+        selectedModalities,
+        selectedServices,
+        ratingRange,
+    } = useSearch();
+
     const [spaces, setSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
@@ -33,6 +41,7 @@ function ListSpace() {
     }
 
     // Fetch spaces based on search query and island filter
+
     useEffect(() => {
         const fetchSpaces = async () => {
             setLoading(true);
@@ -49,17 +58,26 @@ function ListSpace() {
 
                 // Apply space type filter if any types are selected
                 if (selectedSpaceTypes.length > 0) {
-                    console.log('Filtering by space types:', selectedSpaceTypes);
-                    data = data.filter(space => {
-                        // Add some debug logging
-                        console.log('Checking space:', {
-                            name: space.name,
-                            spaceTypeId: space.space_type?.id,
-                            selectedTypes: selectedSpaceTypes
-                        });
-                        return space.space_type && selectedSpaceTypes.includes(space.space_type.id);
-                    });
+                    data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
                 }
+
+                // Apply modality filter if any modalities are selected
+                if (selectedModalities.length > 0) {
+                    data = data.filter(space => space.modalities && space.modalities.some(modality => selectedModalities.includes(modality.id)));
+                }
+
+                // Apply service filter if any services are selected
+                if (selectedServices.length > 0) {
+                    data = data.filter(space => space.services && space.services.some(service => selectedServices.includes(service.id)));
+                }
+
+                // Apply rating filter
+                data = data.filter(space => {
+                    const rating = space.totalScore && space.countScore && Number(space.countScore) !== 0
+                        ? parseFloat(space.totalScore) / parseFloat(space.countScore)
+                        : 0;
+                    return rating >= ratingRange[0] && rating <= ratingRange[1];
+                });
 
                 // If there's a search query, filter the results
                 if (searchQuery.trim()) {
@@ -116,8 +134,8 @@ function ListSpace() {
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [searchQuery, selectedIsland, selectedSpaceTypes]); // Make sure selectedSpaceTypes is in dependencies
-
+    }, [searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
+    
     // Load more cards dynamically based on screen size
     const loadMore = () => {
         setIsLoadingMore(true); // Show loader

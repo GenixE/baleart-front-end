@@ -6,6 +6,9 @@ export function SearchProvider({ children }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedIsland, setSelectedIsland] = useState('all');
     const [selectedSpaceTypes, setSelectedSpaceTypes] = useState([]);
+    const [selectedModalities, setSelectedModalities] = useState([]);
+    const [selectedServices, setSelectedServices] = useState([]);
+    const [ratingRange, setRatingRange] = useState([0, 5]);
 
     return (
         <SearchContext.Provider value={{
@@ -15,6 +18,12 @@ export function SearchProvider({ children }) {
             setSelectedIsland,
             selectedSpaceTypes,
             setSelectedSpaceTypes,
+            selectedModalities,
+            setSelectedModalities,
+            selectedServices,
+            setSelectedServices,
+            ratingRange,
+            setRatingRange,
         }}>
             {children}
         </SearchContext.Provider>

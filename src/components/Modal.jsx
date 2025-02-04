@@ -1,11 +1,22 @@
-// Modal.jsx
+import { useEffect, useState } from 'react';
 import Slider from 'rc-slider';
-import {useEffect, useState} from 'react';
 import modalityIcons from '../icons/ModalityIcons.jsx';
 import serviceIcons from '../icons/ServiceIcons.jsx';
 import axios from 'axios';
+import { useSearch } from '../contexts/SearchContext';
 
-export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
+export const Modal = ({ isOpen, onClose }) => {
+    const {
+        selectedModalities,
+        setSelectedModalities,
+        selectedServices,
+        setSelectedServices,
+        ratingRange,
+        setRatingRange,
+    } = useSearch();
+
+    const [modalities, setModalities] = useState([]);
+    const [services, setServices] = useState([]);
 
     useEffect(() => {
         const fetchModalities = async () => {
@@ -31,16 +42,29 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
         fetchServices();
     }, []);
 
-    const [modalities, setModalities] = useState([]);
-    const [services, setServices] = useState([]);
+    const handleModalityClick = (modality) => {
+        setSelectedModalities(prevSelected => {
+            const isSelected = prevSelected.includes(modality.id);
+            return isSelected
+                ? prevSelected.filter(id => id !== modality.id)
+                : [...prevSelected, modality.id];
+        });
+    };
+
+    const handleServiceClick = (service) => {
+        setSelectedServices(prevSelected => {
+            const isSelected = prevSelected.includes(service.id);
+            return isSelected
+                ? prevSelected.filter(id => id !== service.id)
+                : [...prevSelected, service.id];
+        });
+    };
+
+    const handleSliderChange = (value) => {
+        setRatingRange(value);
+    };
 
     if (!isOpen) return null;
-
-    // Handle changes to the slider value
-    const handleSliderChange = (value) => {
-        setSliderValue(value);
-        console.log('Selected range:', value);
-    };
 
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto">
@@ -48,8 +72,7 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
                 <header className="flex justify-between items-center">
                     <h2 className="text-2xl font-semibold text-center flex-grow">Filters</h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                             stroke="currentColor" className="size-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -57,21 +80,21 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
                 <div className="border-b pb-4">
                     <h2 className="text-lg font-semibold mb-4 mt-4">Ratings</h2>
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-700">{sliderValue[0]}</span>
+                        <span className="text-sm text-gray-700">{ratingRange[0]}</span>
                         <Slider
                             styles={{
-                                track: {backgroundColor: '#149d80'},
-                                rail: {backgroundColor: '#e5e7eb'},
-                                handle: {backgroundColor: '#149d80'}
+                                track: { backgroundColor: '#149d80' },
+                                rail: { backgroundColor: '#e5e7eb' },
+                                handle: { backgroundColor: '#149d80' }
                             }}
                             range
-                            defaultValue={[sliderValue[0], sliderValue[1]]}
+                            value={ratingRange}
                             min={0}
                             max={5}
                             step={0.1}
                             onChange={handleSliderChange}
                         />
-                        <span className="text-sm text-gray-700">{sliderValue[1]}</span>
+                        <span className="text-sm text-gray-700">{ratingRange[1]}</span>
                     </div>
                 </div>
                 <div className="border-b pb-4">
@@ -80,7 +103,10 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
                         {modalities.map((modality) => (
                             <button
                                 key={modality.id}
-                                className="px-4 py-2 border border-gray-300 rounded-full flex items-center gap-2 hover:border-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap"
+                                className={`px-4 py-2 border border-gray-300 rounded-full flex items-center gap-2 hover:border-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap ${
+                                    selectedModalities.includes(modality.id) ? 'bg-gray-100 border-gray-500' : ''
+                                }`}
+                                onClick={() => handleModalityClick(modality)}
                             >
                                 {modalityIcons[modality.id]}
                                 <span>{modality.description_EN}</span>
@@ -94,7 +120,10 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
                         {services.map((service) => (
                             <button
                                 key={service.id}
-                                className="px-4 py-2 border border-gray-300 rounded-full flex items-center gap-2 hover:border-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap"
+                                className={`px-4 py-2 border border-gray-300 rounded-full flex items-center gap-2 hover:border-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap ${
+                                    selectedServices.includes(service.id) ? 'bg-gray-100 border-gray-500' : ''
+                                }`}
+                                onClick={() => handleServiceClick(service)}
                             >
                                 {serviceIcons[service.id]}
                                 <span>{service.description_EN}</span>
