@@ -99,7 +99,7 @@ export const Filter = () => {
                 {/* Filters button */}
                 <button
                     onClick={openModal}
-                    className="px-4 py-2 border rounded-lg flex items-center gap-2 hover:bg-gray-50 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:border-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                          stroke="currentColor" className="size-5">
