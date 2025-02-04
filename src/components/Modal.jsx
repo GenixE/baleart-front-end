@@ -88,7 +88,7 @@ export const Modal = ({isOpen, onClose, sliderValue, setSliderValue}) => {
                         ))}
                     </div>
                 </div>
-                <div className="border-b pb-4">
+                <div className="pb-4">
                     <h2 className="text-lg font-semibold mb-4 mt-4">Services</h2>
                     <div className="justify gap-2 flex flex-wrap">
                         {services.map((service) => (

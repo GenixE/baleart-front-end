@@ -10,8 +10,8 @@ function App() {
     return (
         <>
             <Header/>
-            <div className="container mx-auto mt-6">
-                <div className="flex flex-row flex-wrap justify-center gap-4 mx-4 sm:mx-8 md:mx-16 xl:mx-20">
+            <div className="mx-20 my-2">
+                <div className="flex flex-row flex-wrap justify-center gap-4 mx-4">
                     <ListSpace/>
                 </div>
             </div>

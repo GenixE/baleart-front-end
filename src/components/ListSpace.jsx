@@ -1,13 +1,41 @@
-import { useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef} from 'react';
 import Card from './Card';
 
 function ListSpace() {
     const [spaces, setSpaces] = useState([]);
     const [imagesData, setImagesData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [visibleCount, setVisibleCount] = useState(8); // Show 8 cards by default
+    const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount()); // Dynamic initial count
     const [isLoadingMore, setIsLoadingMore] = useState(false); // Track loading state for "Load More"
     const sentinelRef = useRef(null); // Ref for the sentinel element
+
+    // Function to get the initial visible count based on screen size
+    function getInitialVisibleCount() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth >= 1536) { // 2xl screens
+            return 12;
+        } else if (screenWidth >= 1280) { // xl screens
+            return 8;
+        } else if (screenWidth >= 768) { // md screens
+            return 6;
+        } else { // sm screens
+            return 4;
+        }
+    }
+
+    // Function to get the number of cards to load based on screen size
+    function getCardsToLoad() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth >= 1536) { // 2xl screens
+            return 6;
+        } else if (screenWidth >= 1280) { // xl screens
+            return 4;
+        } else if (screenWidth >= 768) { // md screens
+            return 3;
+        } else { // sm screens
+            return 2;
+        }
+    }
 
     useEffect(() => {
         // Fetch space info from the API
@@ -59,11 +87,12 @@ function ListSpace() {
             });
     }, []);
 
-    // Load 4 more cards
+    // Load more cards dynamically based on screen size
     const loadMore = () => {
         setIsLoadingMore(true); // Show loader
         setTimeout(() => {
-            setVisibleCount((prevCount) => prevCount + 4);
+            const cardsToLoad = getCardsToLoad();
+            setVisibleCount((prevCount) => prevCount + cardsToLoad);
             setIsLoadingMore(false); // Hide loader
         }, 1000); // Simulate a delay for loading (1 second)
     };
@@ -76,7 +105,7 @@ function ListSpace() {
                     loadMore(); // Load more cards when sentinel is in view
                 }
             },
-            { threshold: 1.0 } // Trigger when the sentinel is fully visible
+            {threshold: 1.0} // Trigger when the sentinel is fully visible
         );
 
         if (sentinelRef.current) {
@@ -106,7 +135,7 @@ function ListSpace() {
     return (
         <div className="flex flex-col items-center w-full mt-4">
             {/* Grid with visible items */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
                 {spaces.slice(0, visibleCount).map((item) => (
                     <Card
                         key={item.id}
