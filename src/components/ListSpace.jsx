@@ -3,7 +3,7 @@ import {useSearch} from '../contexts/SearchContext';
 import Card from './Card';
 
 function ListSpace() {
-    const {searchQuery, selectedIsland} = useSearch();
+    const {searchQuery, selectedIsland, selectedSpaceTypes} = useSearch();
     const [spaces, setSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
@@ -47,13 +47,25 @@ function ListSpace() {
                 const spacesResult = await spacesResponse.json();
                 data = spacesResult.data;
 
-                // If there's a search query, filter the island-filtered results
+                // Apply space type filter if any types are selected
+                if (selectedSpaceTypes.length > 0) {
+                    console.log('Filtering by space types:', selectedSpaceTypes);
+                    data = data.filter(space => {
+                        // Add some debug logging
+                        console.log('Checking space:', {
+                            name: space.name,
+                            spaceTypeId: space.space_type?.id,
+                            selectedTypes: selectedSpaceTypes
+                        });
+                        return space.space_type && selectedSpaceTypes.includes(space.space_type.id);
+                    });
+                }
+
+                // If there's a search query, filter the results
                 if (searchQuery.trim()) {
-                    // Make the search request
                     const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
                     const searchResults = await searchResponse.json();
 
-                    // Only keep spaces that exist in both the island filter and search results
                     data = data.filter(spaceFromIsland =>
                         searchResults.some(searchSpace => searchSpace.id === spaceFromIsland.id)
                     );
@@ -89,6 +101,7 @@ function ListSpace() {
                     };
                 });
 
+                console.log('Final merged data:', mergedData); // Log final data
                 setSpaces(mergedData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -100,10 +113,11 @@ function ListSpace() {
         // Add debouncing for search queries
         const timeoutId = setTimeout(() => {
             fetchSpaces();
-        }, 300); // 300ms delay
+        }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [searchQuery, selectedIsland]);
+    }, [searchQuery, selectedIsland, selectedSpaceTypes]); // Make sure selectedSpaceTypes is in dependencies
+
     // Load more cards dynamically based on screen size
     const loadMore = () => {
         setIsLoadingMore(true); // Show loader
@@ -139,6 +153,9 @@ function ListSpace() {
     if (loading) {
         return (
             <div className="loader">
+                <span></span>
+                <span></span>
+                <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
