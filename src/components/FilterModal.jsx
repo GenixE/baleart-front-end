@@ -5,7 +5,7 @@ import serviceIcons from '../icons/ServiceIcons.jsx';
 import axios from 'axios';
 import { useSearch } from '../contexts/SearchContext';
 
-export const Modal = ({ isOpen, onClose }) => {
+export const FilterModal = ({ isOpen, onClose }) => {
     const {
         selectedModalities,
         setSelectedModalities,

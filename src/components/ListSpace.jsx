@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useSearch } from '../contexts/SearchContext';
+import {useEffect, useRef, useState} from 'react';
+import {useSearch} from '../contexts/SearchContext';
 import Card from './Card';
 
 function ListSpace() {
@@ -135,7 +135,7 @@ function ListSpace() {
 
         return () => clearTimeout(timeoutId);
     }, [searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
-    
+
     // Load more cards dynamically based on screen size
     const loadMore = () => {
         setIsLoadingMore(true); // Show loader

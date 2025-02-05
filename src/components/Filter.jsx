@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation, Pagination} from 'swiper/modules';
 import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
-import {Modal} from './Modal';
+import {FilterModal} from './FilterModal.jsx';
 import {useSearch} from '../contexts/SearchContext';
 
 export const Filter = () => {
@@ -139,7 +139,7 @@ export const Filter = () => {
                     <span>Filters</span>
                 </button>
             </div>
-            <Modal
+            <FilterModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 sliderValue={sliderValue}

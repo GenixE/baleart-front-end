@@ -3,9 +3,10 @@ import 'swiper/css/bundle';
 import './css/navbutton.css';
 import './css/pagination.css';
 import './css/loading.css';
+import './css/modal.css';
 import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
-import { SearchProvider } from './contexts/SearchContext';
+import {SearchProvider} from './contexts/SearchContext';
 
 function App() {
     return (
