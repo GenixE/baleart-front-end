@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
 import {useSearch} from '../contexts/SearchContext';
-import {Filter} from "./Filter.jsx";
 import AuthModal from './AuthModal';
 import axios from "axios";
 
@@ -86,7 +85,7 @@ export const Header = () => {
 
     return (
         <>
-            <header className="bg-white shadow-xs sticky top-0 z-50">
+            <header className="bg-white shadow-xs">
                 <div className="mx-4 sm:mx-8 md:mx-16 xl:mx-20 p-4">
                     <div className="flex items-center w-full">
                         <div className="flex-shrink-0 pr-40">
@@ -207,7 +206,6 @@ export const Header = () => {
                     </div>
                 </div>
             </header>
-            <Filter/>
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} type={authModalType}/>
         </>
     );
