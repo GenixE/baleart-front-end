@@ -1,8 +1,10 @@
 import {useEffect, useRef, useState} from 'react';
 import {useSearch} from '../contexts/SearchContext';
+import {useNavigate} from 'react-router-dom';
 import Card from './Card';
 
 function ListSpace() {
+    const navigate = useNavigate();
     const {
         searchQuery,
         selectedIsland,
@@ -39,6 +41,10 @@ function ListSpace() {
             return 2;
         }
     }
+
+    const handleCardClick = (id) => {
+        navigate(`/space/${id}`);
+    };
 
     // Fetch spaces based on search query and island filter
 
@@ -229,13 +235,14 @@ function ListSpace() {
                     <div
                         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
                         {spaces.slice(0, visibleCount).map((item) => (
+                            <div key={item.id} onClick={() => handleCardClick(item.id)}>
                             <Card
-                                key={item.id}
                                 images={item.images}
                                 title={item.title}
                                 description={item.description}
                                 rating={item.rating}
                             />
+                            </div>
                         ))}
                     </div>
 
