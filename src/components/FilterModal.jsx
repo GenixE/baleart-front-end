@@ -3,7 +3,7 @@ import Slider from 'rc-slider';
 import modalityIcons from '../icons/ModalityIcons.jsx';
 import serviceIcons from '../icons/ServiceIcons.jsx';
 import axios from 'axios';
-import { useSearch } from '../contexts/SearchContext';
+import { useSearch } from '../contexts/FilterContext.jsx';
 
 export const FilterModal = ({ isOpen, onClose }) => {
     const {

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 
-const SearchContext = createContext();
+const FilterContext = createContext();
 
 export function SearchProvider({ children }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -11,7 +11,7 @@ export function SearchProvider({ children }) {
     const [ratingRange, setRatingRange] = useState([0, 5]);
 
     return (
-        <SearchContext.Provider value={{
+        <FilterContext.Provider value={{
             searchQuery,
             setSearchQuery,
             selectedIsland,
@@ -26,10 +26,10 @@ export function SearchProvider({ children }) {
             setRatingRange,
         }}>
             {children}
-        </SearchContext.Provider>
+        </FilterContext.Provider>
     );
 }
 
 export function useSearch() {
-    return useContext(SearchContext);
+    return useContext(FilterContext);
 }

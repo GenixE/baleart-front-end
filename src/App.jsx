@@ -7,10 +7,13 @@ import './css/loading.css';
 import './css/modal.css';
 import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
-import { SearchProvider } from './contexts/SearchContext';
+import { SearchProvider } from './contexts/FilterContext.jsx';
 import { Filter } from "./components/Filter.jsx";
 import { Space } from './components/Space';
 import {Navigate} from "react-router";
+import {AccountSettings} from "./components/AccountSettings.jsx";
+import {LoginAndSecurity} from "./components/LoginAndSecurity.jsx";
+import {PersonalInfo} from "./components/PersonalInfo.jsx";
 
 function App() {
     return (
@@ -38,6 +41,10 @@ function AppContent() {
                         <Route path="/" element={<ListSpace />} />
                         <Route path="/space/:id" element={<Space />} />
                         <Route path="*" element={<Navigate to="/" />} />
+                        <Route path="/account-settings" element={<AccountSettings />} />
+                        <Route path="/account-settings/personal-info" element={<PersonalInfo />} />
+                        <Route path="/account-settings/login-and-security" element={<LoginAndSecurity />} />
+                        <Route path="/comments" element={<AccountSettings />} />
                     </Routes>
                 </div>
             </div>

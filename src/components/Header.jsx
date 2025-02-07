@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
-import {useSearch} from '../contexts/SearchContext';
+import {useSearch} from '../contexts/FilterContext.jsx';
+import {Link} from 'react-router-dom';
 import AuthModal from './AuthModal';
 import axios from "axios";
 
@@ -175,10 +176,12 @@ export const Header = () => {
                                         className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                         {isLoggedIn ? (
                                             <>
-                                                <a href="/profile"
-                                                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
-                                                <a href="/settings"
-                                                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
+                                                <Link to="/account-settings"
+                                                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100">My
+                                                    Account</Link>
+                                                <Link to="/comments"
+                                                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100">My
+                                                    Comments</Link>
                                                 <button onClick={handleLogout}
                                                         className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">Logout
                                                 </button>

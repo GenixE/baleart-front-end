@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {useSearch} from '../contexts/SearchContext';
+import {useSearch} from '../contexts/FilterContext.jsx';
 import {useNavigate} from 'react-router-dom';
 import Card from './Card';
 

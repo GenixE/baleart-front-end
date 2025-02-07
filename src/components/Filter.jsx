@@ -4,7 +4,7 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation, Pagination} from 'swiper/modules';
 import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
 import {FilterModal} from './FilterModal.jsx';
-import {useSearch} from '../contexts/SearchContext';
+import {useSearch} from '../contexts/FilterContext.jsx';
 
 export const Filter = () => {
     const {selectedSpaceTypes, setSelectedSpaceTypes} = useSearch();
