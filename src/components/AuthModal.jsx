@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
-const AuthModal = ({isOpen, onClose, type}) => {
+const AuthModal = ({ isOpen, onClose, type }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
@@ -24,7 +24,7 @@ const AuthModal = ({isOpen, onClose, type}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const url = type === 'login' ? 'http://localhost:8000/api/login' : 'http://localhost:8000/api/register';
-        const data = type === 'login' ? {email, password} : {
+        const data = type === 'login' ? { email, password } : {
             name,
             lastName,
             email,
@@ -36,7 +36,11 @@ const AuthModal = ({isOpen, onClose, type}) => {
         try {
             const response = await axios.post(url, data);
             console.log('Response:', response.data);
+
+            // Store the token and email in localStorage
             localStorage.setItem('token', response.data.access_token);
+            localStorage.setItem('email', email); // Store the email in localStorage
+
             onClose();
             window.location.reload(); // Reload to update the UI
         } catch (error) {
@@ -55,7 +59,7 @@ const AuthModal = ({isOpen, onClose, type}) => {
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                  stroke="currentColor" className="size-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </header>
@@ -65,36 +69,36 @@ const AuthModal = ({isOpen, onClose, type}) => {
                             <>
                                 <label>
                                     <input required type="text" value={name}
-                                           onChange={(e) => setName(e.target.value)} className="input"/>
+                                           onChange={(e) => setName(e.target.value)} className="input" />
                                     <span>Firstname</span>
                                 </label>
                                 <label>
                                     <input required type="text" value={lastName}
-                                           onChange={(e) => setLastName(e.target.value)} className="input"/>
+                                           onChange={(e) => setLastName(e.target.value)} className="input" />
                                     <span>Lastname</span>
                                 </label>
                                 <label>
                                     <input required type="tel" value={phone}
-                                           onChange={(e) => setPhone(e.target.value)} className="input"/>
+                                           onChange={(e) => setPhone(e.target.value)} className="input" />
                                     <span>Phone number</span>
                                 </label>
                             </>
                         )}
                         <label>
                             <input required type="email" value={email}
-                                   onChange={(e) => setEmail(e.target.value)} className="input"/>
+                                   onChange={(e) => setEmail(e.target.value)} className="input" />
                             <span>Email</span>
                         </label>
                         <label>
                             <input required type="password" value={password}
-                                   onChange={(e) => setPassword(e.target.value)} className="input"/>
+                                   onChange={(e) => setPassword(e.target.value)} className="input" />
                             <span>Password</span>
                         </label>
                         {type === 'register' && (
                             <label>
                                 <input required type="password"
                                        value={passwordConfirmation}
-                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input"/>
+                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input" />
                                 <span>Confirm password</span>
                             </label>
                         )}
@@ -103,7 +107,6 @@ const AuthModal = ({isOpen, onClose, type}) => {
                 </div>
             </div>
         </StyledWrapper>
-
     );
 };
 
@@ -238,6 +241,5 @@ const StyledWrapper = styled.div`
             opacity: 0;
         }
     }`;
-
 
 export default AuthModal;

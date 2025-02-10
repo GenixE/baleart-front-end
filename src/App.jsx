@@ -10,18 +10,22 @@ import ListSpace from "./components/ListSpace.jsx";
 import { SearchProvider } from './contexts/FilterContext.jsx';
 import { Filter } from "./components/Filter.jsx";
 import { Space } from './components/Space';
-import {Navigate} from "react-router";
-import {AccountSettings} from "./components/AccountSettings.jsx";
-import {LoginAndSecurity} from "./components/LoginAndSecurity.jsx";
-import {PersonalInfo} from "./components/PersonalInfo.jsx";
+import { Navigate } from "react-router";
+import { AccountSettings } from "./components/AccountSettings.jsx";
+import { LoginAndSecurity } from "./components/LoginAndSecurity.jsx";
+import { PersonalInfo } from "./components/PersonalInfo.jsx";
+import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import { AuthProvider } from './contexts/AuthContext'; // Import the AuthProvider
 
 function App() {
     return (
-        <Router>
-            <SearchProvider>
-                <AppContent />
-            </SearchProvider>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <SearchProvider>
+                    <AppContent />
+                </SearchProvider>
+            </Router>
+        </AuthProvider>
     );
 }
 
@@ -41,10 +45,40 @@ function AppContent() {
                         <Route path="/" element={<ListSpace />} />
                         <Route path="/space/:id" element={<Space />} />
                         <Route path="*" element={<Navigate to="/" />} />
-                        <Route path="/account-settings" element={<AccountSettings />} />
-                        <Route path="/account-settings/personal-info" element={<PersonalInfo />} />
-                        <Route path="/account-settings/login-and-security" element={<LoginAndSecurity />} />
-                        <Route path="/comments" element={<AccountSettings />} />
+
+                        {/* Protected Routes */}
+                        <Route
+                            path="/account-settings"
+                            element={
+                                <PrivateRoute>
+                                    <AccountSettings />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/account-settings/personal-info"
+                            element={
+                                <PrivateRoute>
+                                    <PersonalInfo />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/account-settings/login-and-security"
+                            element={
+                                <PrivateRoute>
+                                    <LoginAndSecurity />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/comments"
+                            element={
+                                <PrivateRoute>
+                                    <AccountSettings />
+                                </PrivateRoute>
+                            }
+                        />
                     </Routes>
                 </div>
             </div>
