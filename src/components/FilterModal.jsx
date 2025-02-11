@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Slider from 'rc-slider';
 import modalityIcons from '../icons/ModalityIcons.jsx';
 import serviceIcons from '../icons/ServiceIcons.jsx';
 import axios from 'axios';
-import { useSearch } from '../contexts/FilterContext.jsx';
+import {useSearch} from '../contexts/FilterContext.jsx';
 
-export const FilterModal = ({ isOpen, onClose }) => {
+export const FilterModal = ({isOpen, onClose}) => {
     const {
         selectedModalities,
         setSelectedModalities,
@@ -72,7 +72,8 @@ export const FilterModal = ({ isOpen, onClose }) => {
                 <header className="flex justify-between items-center">
                     <h2 className="text-2xl font-semibold text-center flex-grow">Filters</h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                             stroke="currentColor" className="size-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -83,9 +84,9 @@ export const FilterModal = ({ isOpen, onClose }) => {
                         <span className="text-sm text-gray-700">{ratingRange[0]}</span>
                         <Slider
                             styles={{
-                                track: { backgroundColor: '#149d80' },
-                                rail: { backgroundColor: '#e5e7eb' },
-                                handle: { backgroundColor: '#149d80' }
+                                track: {backgroundColor: '#149d80'},
+                                rail: {backgroundColor: '#e5e7eb'},
+                                handle: {backgroundColor: '#149d80'}
                             }}
                             range
                             value={ratingRange}
@@ -98,7 +99,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <div className="border-b pb-4">
-                    <h2 className="text-lg font-semibold mb-4 mt-4">Modalities</h2>
+                    <h2 className="text-lg font-semibold mb-4 mt-4">Art Forms</h2>
                     <div className="justify gap-2 flex flex-wrap">
                         {modalities.map((modality) => (
                             <button
@@ -115,7 +116,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <div className="pb-4">
-                    <h2 className="text-lg font-semibold mb-4 mt-4">Services</h2>
+                    <h2 className="text-lg font-semibold mb-4 mt-4">Amenities</h2>
                     <div className="justify gap-2 flex flex-wrap">
                         {services.map((service) => (
                             <button
