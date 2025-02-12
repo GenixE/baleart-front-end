@@ -1,12 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import {useLanguage} from "../contexts/LanguageContext.jsx";
 
 export function AccountSettings() {
     const navigate = useNavigate();
+    const {language} = useLanguage();
 
     return (
         <div className="p-6 space-y-6">
-            <h1 className="text-3xl font-semibold">Account</h1>
-            <h2 className="text-lg text-gray-600">Manage your account settings.</h2>
+            <h1 className="text-3xl font-semibold">{language === 'EN' ? 'Account' : language === 'ES' ? 'Mi cuenta' : 'El meu compte'}</h1>
+            <h2 className="text-lg text-gray-600">{language === 'EN' ? 'Manage your account settings.' : language === 'ES' ? 'Administrar la configuración de su cuenta.' : 'Administrar la configuració del vostre compte.'}</h2>
             <div className="flex flex-row space-x-6 flex-nowrap">
                 {/* Personal Info Section */}
                 <button
@@ -28,8 +30,8 @@ export function AccountSettings() {
                         ></path>
                     </svg>
 
-                    <h2 className="text-xl font-semibold mt-4">Personal Info</h2>
-                    <p className="text-gray-600">Provide personal details and how we can reach you.</p>
+                    <h2 className="text-xl font-semibold mt-4">{language === 'EN' ? 'Personal Info' : language === 'ES' ? 'Información Personal' : 'Informació Personal'}</h2>
+                    <p className="text-gray-600">{language === 'EN' ? 'Provide personal details and how we can reach you.' : language === 'ES' ? 'Proporcionar detalles personales y cómo podemos comunicarnos con usted.' : 'Proporcionar detalls personals i com podem contactar amb vosaltres.'}</p>
                 </button>
 
                 {/* Login & Security Section */}
@@ -55,8 +57,8 @@ export function AccountSettings() {
                         </g>
                     </svg>
 
-                    <h2 className="text-xl font-semibold mt-4">Login & Security</h2>
-                    <p className="text-gray-600">Update your password and secure your account.</p>
+                    <h2 className="text-xl font-semibold mt-4">{language === 'EN' ? 'Login & Security' : language === 'ES' ? 'Inicio de sesión y seguridad' : 'Inici de sessió i seguretat'}</h2>
+                    <p className="text-gray-600">{language === 'EN' ? 'Update your password and secure your account.' : language === 'ES' ? 'Actualizar su contraseña y asegure su cuenta.' : 'Actualitzar la vostra contrasenya i assegureu el vostre compte.'}</p>
                 </button>
             </div>
         </div>

@@ -215,13 +215,13 @@ export const Header = () => {
                                                     to="/account-settings"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'My Account' : language === 'ES' ? 'Mi cuenta' : 'Compte'}
+                                                    {language === 'EN' ? 'My Account' : language === 'ES' ? 'Mi cuenta' : 'El meu compte'}
                                                 </Link>
                                                 <Link
                                                     to="/comments"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'My comments' : language === 'ES' ? 'Mis comentarios' : 'Comentaris'}
+                                                    {language === 'EN' ? 'My comments' : language === 'ES' ? 'Mis comentarios' : 'Els meus comentaris'}
                                                 </Link>
                                                 <button
                                                     onClick={handleLogout}
