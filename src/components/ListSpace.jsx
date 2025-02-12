@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {useSearch} from '../contexts/FilterContext.jsx';
+import { useEffect, useRef, useState } from 'react';
+import { useSearch } from '../contexts/FilterContext.jsx';
 import Card from './Card';
 
 function ListSpace() {
@@ -44,8 +44,16 @@ function ListSpace() {
         window.open(`/space/${id}`, '_blank');
     };
 
-    // Fetch spaces based on search query and island filter
+    // Function to shuffle an array randomly
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    };
 
+    // Fetch spaces based on search query and island filter
     useEffect(() => {
         const fetchSpaces = async () => {
             setLoading(true);
@@ -123,8 +131,24 @@ function ListSpace() {
                     };
                 });
 
-                console.log('Final merged data:', mergedData); // Log final data
-                setSpaces(mergedData);
+                // Separate spaces into three groups:
+                // 1. Best-rated spaces (rating >= 4)
+                // 2. Spaces with ratings below 4
+                // 3. Spaces with no ratings
+                const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
+                const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
+                const noRatingSpaces = mergedData.filter(space => space.rating === 0);
+
+                // Shuffle each group
+                const shuffledBestRated = shuffleArray(bestRatedSpaces);
+                const shuffledRatedBelow4 = shuffleArray(ratedBelow4Spaces);
+                const shuffledNoRating = shuffleArray(noRatingSpaces);
+
+                // Combine the shuffled groups in the desired order
+                const finalData = [...shuffledBestRated, ...shuffledRatedBelow4, ...shuffledNoRating];
+
+                console.log('Final merged data:', finalData); // Log final data
+                setSpaces(finalData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -158,7 +182,7 @@ function ListSpace() {
                     loadMore(); // Load more cards when sentinel is in view
                 }
             },
-            {threshold: 1.0} // Trigger when the sentinel is fully visible
+            { threshold: 1.0 } // Trigger when the sentinel is fully visible
         );
 
         if (sentinelRef.current) {

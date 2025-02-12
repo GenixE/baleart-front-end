@@ -1,23 +1,28 @@
-import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ServiceIcons from "../icons/ServiceIcons.jsx";
 import ModalityIcons from "../icons/ModalityIcons.jsx";
-import {useLanguage} from '../contexts/LanguageContext.jsx'; // Import the useLanguage hook
-import axios from 'axios'; // Import axios for API calls
+import { useLanguage } from '../contexts/LanguageContext.jsx';
+import axios from 'axios';
 
 export const Space = () => {
     const apiKey = import.meta.env.VITE_API_KEY;
-    const {id} = useParams();
+    const { id } = useParams();
     const [space, setSpace] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
-    const {language} = useLanguage(); // Get the current language from context
+    const { language } = useLanguage();
 
     // State for translations
     const [spaceTypes, setSpaceTypes] = useState([]);
     const [modalities, setModalities] = useState([]);
     const [services, setServices] = useState([]);
+
+    // State for comments and pagination
+    const [comments, setComments] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const commentsPerPage = 5;
 
     // Fetch space details and translations
     useEffect(() => {
@@ -30,6 +35,7 @@ export const Space = () => {
                 }
                 const data = await response.json();
                 setSpace(data.data);
+                setComments(data.data.comments || []);
 
                 // Fetch spaces.json containing the images
                 const spacesResponse = await fetch('/spaces.json');
@@ -115,6 +121,23 @@ export const Space = () => {
             default:
                 return item.name;
         }
+    };
+
+    // Pagination logic
+    const indexOfLastComment = currentPage * commentsPerPage;
+    const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+    const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Helper function to get random color for user icons
+    const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     };
 
     if (loading) {
@@ -351,6 +374,97 @@ export const Space = () => {
                                     {language === 'EN' ? 'Get Directions' : language === 'ES' ? 'Obtener Dirección' : 'Obtenir Adreça'}
                                 </a>
                             </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Line Break */}
+                <hr className="my-4 text-gray-300"/>
+
+                {/* Comments Section */}
+                <div className="mt-8">
+                    <h2 className="text-2xl font-semibold mb-4">
+                        {language === 'EN' ? 'Comments' : language === 'ES' ? 'Comentarios' : 'Comentaris'}
+                    </h2>
+                    {currentComments.length > 0 ? (
+                        <div className="space-y-4">
+                            {currentComments.map((comment) => (
+                                <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
+                                    {/* Comment User Details */}
+                                    <div className="flex items-center mb-2">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill={getRandomColor()}
+                                            className="w-6 h-6 text-gray-600"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                        <span className="ml-2 text-gray-700 font-medium">
+                            {comment.user.name} {comment.user.lastName}
+                        </span>
+                                    </div>
+
+                                    {/* Comment Text */}
+                                    <p className="text-gray-700">{comment.comment}</p>
+
+                                    {/* Comment Score */}
+                                    <div className="flex items-center mt-2">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="#149d80"
+                                            className="w-5 h-5"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                        <span className="ml-2 text-gray-600">{comment.score}</span>
+                                    </div>
+
+                                    {/* Comment Images */}
+                                    {comment.images && comment.images.length > 0 && (
+                                        <div className="mt-4 flex space-x-2">
+                                            {comment.images.map((image) => (
+                                                <img
+                                                    key={image.id}
+                                                    src={image.url}
+                                                    alt="Comment"
+                                                    className="w-20 h-20 object-cover rounded-lg"
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-600">
+                            {language === 'EN' ? 'No comments yet.' : language === 'ES' ? 'No hay comentarios aún.' : 'Encara no hi ha comentaris.'}
+                        </p>
+                    )}
+
+                    {/* Pagination */}
+                    {comments.length > commentsPerPage && (
+                        <div className="flex justify-center mt-6">
+                            {Array.from({ length: Math.ceil(comments.length / commentsPerPage) }, (_, i) => (
+                                <button
+                                    key={i + 1}
+                                    onClick={() => paginate(i + 1)}
+                                    className={`mx-1 px-4 py-2 rounded-lg ${
+                                        currentPage === i + 1 ? 'bg-[#149d80] text-white' : 'bg-gray-200 text-gray-700'
+                                    }`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
                         </div>
                     )}
                 </div>
