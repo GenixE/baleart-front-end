@@ -1,23 +1,24 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Swiper, SwiperSlide} from 'swiper/react';
-import {Navigation, Pagination} from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
 import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
-import {FilterModal} from './FilterModal.jsx';
-import {useSearch} from '../contexts/FilterContext.jsx';
+import { FilterModal } from './FilterModal.jsx';
+import { useSearch } from '../contexts/FilterContext.jsx';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
 
 export const Filter = () => {
-    const {selectedSpaceTypes, setSelectedSpaceTypes} = useSearch();
+    const { selectedSpaceTypes, setSelectedSpaceTypes } = useSearch();
     const [spaceTypes, setSpaceTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sliderValue, setSliderValue] = useState([0, 5]);
     const [loading, setLoading] = useState(true);
+    const { language } = useLanguage();
 
     useEffect(() => {
         const fetchSpaceTypes = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/space-types');
-                // The response is directly an array
                 setSpaceTypes(response.data);
             } catch (error) {
                 console.error('Error fetching space types:', error);
@@ -30,13 +31,11 @@ export const Filter = () => {
     }, []);
 
     const handleFilterClick = (type) => {
-        console.log('Clicked space type:', type);
         setSelectedSpaceTypes(prevSelectedTypes => {
             const isTypeSelected = prevSelectedTypes.includes(type.id);
             const newSelectedTypes = isTypeSelected
                 ? prevSelectedTypes.filter(id => id !== type.id)
                 : [...prevSelectedTypes, type.id];
-            console.log('Updated selected types:', newSelectedTypes);
             return newSelectedTypes;
         });
     };
@@ -67,11 +66,11 @@ export const Filter = () => {
                         <Swiper
                             modules={[Navigation, Pagination]}
                             breakpoints={{
-                                320: {slidesPerView: 3},
-                                480: {slidesPerView: 5},
-                                720: {slidesPerView: 8},
-                                1000: {slidesPerView: 12},
-                                2000: {slidesPerView: 15},
+                                320: { slidesPerView: 3 },
+                                480: { slidesPerView: 5 },
+                                720: { slidesPerView: 8 },
+                                1000: { slidesPerView: 12 },
+                                2000: { slidesPerView: 15 },
                             }}
                             navigation={{
                                 nextEl: '.swiper-button-next',
@@ -112,7 +111,7 @@ export const Filter = () => {
                                             )}
                                         </div>
                                         <p className={`text-xs font-semibold text-center ${selectedSpaceTypes.includes(type.id) ? 'text-[#149d80]' : 'text-gray-700'}`}>
-                                            {type.description_EN}
+                                            {type[`description_${language}`]}
                                         </p>
                                     </div>
                                 </SwiperSlide>
@@ -136,7 +135,7 @@ export const Filter = () => {
                         <path strokeLinecap="round" strokeLinejoin="round"
                               d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5"/>
                     </svg>
-                    <span>Filters</span>
+                    <span>{language === 'EN' ? 'Filters' : language === 'ES' ? 'Filtros' : 'Filtres'}</span>
                 </button>
             </div>
             <FilterModal

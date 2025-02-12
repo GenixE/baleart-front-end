@@ -3,7 +3,8 @@ import { useSearch } from '../contexts/FilterContext.jsx';
 import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext'; // Import the useAuth hook
+import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
 
 export const Header = () => {
     const { searchQuery, setSearchQuery, selectedIsland, setSelectedIsland } = useSearch();
@@ -14,7 +15,8 @@ export const Header = () => {
     const userDropdownRef = useRef(null);
     const languageDropdownRef = useRef(null);
     const [islands, setIslands] = useState([]);
-    const { isLoggedIn, logout } = useAuth(); // Use the authentication state
+    const { isLoggedIn, logout } = useAuth();
+    const { language, setLanguage } = useLanguage();
 
     const toggleUserDropdown = () => {
         setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -72,11 +74,16 @@ export const Header = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
-            logout(); // Use the logout function from AuthContext
+            logout();
             window.location.reload();
         } catch (error) {
             console.error('Error logging out:', error);
         }
+    };
+
+    const handleLanguageChange = (lang) => {
+        setLanguage(lang);
+        setIsLanguageDropdownOpen(false);
     };
 
     return (
@@ -99,7 +106,7 @@ export const Header = () => {
                                             onChange={handleIslandChange}
                                             className="appearance-none bg-white border border-gray-300 shadow-sm rounded-l-full py-3 pl-6 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 h-12"
                                         >
-                                            <option value="all">All</option>
+                                            <option value="all">{language === 'EN' ? 'All' : language === 'ES' ? 'Todos' : 'Tots'}</option>
                                             {islands.map((island) => (
                                                 <option key={island.id} value={island.id}>
                                                     {island.name}
@@ -146,15 +153,24 @@ export const Header = () => {
                                 </button>
                                 {isLanguageDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-                                        <a href="/lang/en" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        <button
+                                            onClick={() => handleLanguageChange('EN')}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        >
                                             English
-                                        </a>
-                                        <a href="/lang/es" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        </button>
+                                        <button
+                                            onClick={() => handleLanguageChange('ES')}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        >
                                             Spanish
-                                        </a>
-                                        <a href="/lang/ca" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        </button>
+                                        <button
+                                            onClick={() => handleLanguageChange('CA')}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        >
                                             Catalan
-                                        </a>
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -199,19 +215,19 @@ export const Header = () => {
                                                     to="/account-settings"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    My Account
+                                                    {language === 'EN' ? 'My Account' : language === 'ES' ? 'Mi cuenta' : 'Compte'}
                                                 </Link>
                                                 <Link
                                                     to="/comments"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    My Comments
+                                                    {language === 'EN' ? 'My comments' : language === 'ES' ? 'Mis comentarios' : 'Comentaris'}
                                                 </Link>
                                                 <button
                                                     onClick={handleLogout}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    Logout
+                                                    {language === 'EN' ? 'Logout' : language === 'ES' ? 'Cerrar sesión' : 'Tancar sessió'}
                                                 </button>
                                             </>
                                         ) : (
@@ -223,7 +239,7 @@ export const Header = () => {
                                                     }}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    Login
+                                                    {language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió'}
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -232,7 +248,7 @@ export const Header = () => {
                                                     }}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    Register
+                                                    {language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se'}
                                                 </button>
                                             </>
                                         )}

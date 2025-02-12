@@ -2,16 +2,24 @@ import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import ServiceIcons from "../icons/ServiceIcons.jsx";
 import ModalityIcons from "../icons/ModalityIcons.jsx";
+import {useLanguage} from '../contexts/LanguageContext.jsx'; // Import the useLanguage hook
+import axios from 'axios'; // Import axios for API calls
 
 export const Space = () => {
-    const apiKey = import.meta.env.VITE_API_KEY
-
+    const apiKey = import.meta.env.VITE_API_KEY;
     const {id} = useParams();
     const [space, setSpace] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
+    const {language} = useLanguage(); // Get the current language from context
 
+    // State for translations
+    const [spaceTypes, setSpaceTypes] = useState([]);
+    const [modalities, setModalities] = useState([]);
+    const [services, setServices] = useState([]);
+
+    // Fetch space details and translations
     useEffect(() => {
         const fetchSpaceDetails = async () => {
             try {
@@ -33,7 +41,6 @@ export const Space = () => {
                 // Find matching space and set image URL
                 const matchedSpace = spacesData.find(s => s.registre === data.data.reg_number);
                 if (matchedSpace && matchedSpace.image) {
-                    // Since we're using direct URLs, we can use them as is
                     setImage(matchedSpace.image);
                 } else {
                     console.log('No matching space found or no image URL', {
@@ -49,13 +56,65 @@ export const Space = () => {
             }
         };
 
+        // Fetch translations for space types, modalities, and services
+        const fetchTranslations = async () => {
+            try {
+                const [spaceTypesRes, modalitiesRes, servicesRes] = await Promise.all([
+                    axios.get('http://localhost:8000/api/space-types'),
+                    axios.get('http://localhost:8000/api/modalities'),
+                    axios.get('http://localhost:8000/api/services')
+                ]);
+
+                setSpaceTypes(spaceTypesRes.data);
+                setModalities(modalitiesRes.data);
+                setServices(servicesRes.data);
+            } catch (error) {
+                console.error('Error fetching translations:', error);
+            }
+        };
+
         fetchSpaceDetails();
+        fetchTranslations();
     }, [id]);
 
     // Add error handling for image loading
     const handleImageError = (e) => {
         console.error('Image failed to load:', image);
         e.target.src = 'https://via.placeholder.com/400';
+    };
+
+    // Helper function to get translated description
+    const getTranslatedDescription = () => {
+        if (!space) return '';
+        switch (language) {
+            case 'CA':
+                return space.observation_CA;
+            case 'ES':
+                return space.observation_ES;
+            default:
+                return space.observation_EN;
+        }
+    };
+
+    // Helper function to get translated name for space type, modalities, and services
+    const getTranslatedName = (item, type) => {
+        if (!item) return '';
+        switch (type) {
+            case 'spaceType': {
+                const spaceType = spaceTypes.find(st => st.id === item.id);
+                return spaceType ? spaceType[`description_${language}`] : item.name;
+            }
+            case 'modality': {
+                const modality = modalities.find(m => m.id === item.id);
+                return modality ? modality[`description_${language}`] : item.name;
+            }
+            case 'service': {
+                const service = services.find(s => s.id === item.id);
+                return service ? service[`description_${language}`] : item.name;
+            }
+            default:
+                return item.name;
+        }
     };
 
     if (loading) {
@@ -87,7 +146,6 @@ export const Space = () => {
                 {/* Space Name and Ratings */}
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">{space.name}</h1>
-                    {/* Conditionally render ratings and star */}
                     {(space.totalScore && space.countScore) ? (
                         <div className="flex items-center">
                             <svg
@@ -108,8 +166,8 @@ export const Space = () => {
                                 />
                             </svg>
                             <span className="ml-2 text-gray-700">
-                {(space.totalScore / space.countScore).toFixed(1)}
-            </span>
+                                {(space.totalScore / space.countScore).toFixed(1)}
+                            </span>
                         </div>
                     ) : null}
                 </div>
@@ -127,13 +185,13 @@ export const Space = () => {
                 {/* Space Type, Municipality, and Island */}
                 <div className="mb-4">
                     <p className="text-2xl font-semibold">
-                        {space.space_type?.name} in {space.address?.municipality?.name}, {space.address?.municipality.island?.name}
+                        {getTranslatedName(space.space_type, 'spaceType')} {language === 'EN' ? 'in' : 'en'} {space.address?.municipality?.name}, {space.address?.municipality.island?.name}
                     </p>
                 </div>
 
-                {/*Description*/}
+                {/* Description */}
                 <div className="mb-4">
-                    <p className="text-gray-700">{space.observation_EN}</p>
+                    <p className="text-gray-700">{getTranslatedDescription()}</p>
                 </div>
 
                 {/* Line Break */}
@@ -141,21 +199,22 @@ export const Space = () => {
 
                 {/* What this place offers */}
                 <div className="mb-4">
-                    <h2 className="text-2xl font-semibold mb-4">What this place offers</h2>
+                    <h2 className="text-2xl font-semibold mb-4">
+                        {language === 'EN' ? 'What this place offers' : language === 'ES' ? '¿Que ofrece este espacio?' : 'Què ofereix aquest espai?'}
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Artistic Disciplines Section */}
                         <div>
-                            <h3 className="text-xl font-semibold mb-2">Artistic Disciplines</h3>
-                            <ul className="list-none text-gray-700"> {/* Removed bullets for a cleaner look */}
+                            <h3 className="text-xl font-semibold mb-2">{language === 'EN' ? 'Art Forms' : language === 'ES' ? 'Modalidades' : 'Modalitats'}</h3>
+                            <ul className="list-none text-gray-700">
                                 {space.modalities?.map((modality) => (
                                     <li key={modality.id} className="flex items-center mb-2">
-                                        <div
-                                            className="w-8 h-8 flex items-center justify-center"> {/* Larger icon container */}
-                                            {ModalityIcons[modality.id] ||
-                                                <span>No Icon</span>} {/* Render modality icon */}
+                                        <div className="w-8 h-8 flex items-center justify-center">
+                                            {ModalityIcons[modality.id] || <span>No Icon</span>}
                                         </div>
-                                        <span
-                                            className="ml-4 text-lg">{modality.name}</span> {/* Text with increased margin */}
+                                        <span className="ml-4 text-lg">
+                                            {getTranslatedName(modality, 'modality')}
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
@@ -163,17 +222,16 @@ export const Space = () => {
 
                         {/* Amenities Section */}
                         <div>
-                            <h3 className="text-xl font-semibold mb-2">Amenities</h3>
-                            <ul className="list-none text-gray-700"> {/* Removed bullets for a cleaner look */}
+                            <h3 className="text-xl font-semibold mb-2">{language === 'EN' ? 'Amenities' : language === 'ES' ? 'Servicios' : 'Serveis'}</h3>
+                            <ul className="list-none text-gray-700">
                                 {space.services?.map((service) => (
                                     <li key={service.id} className="flex items-center mb-2">
-                                        <div
-                                            className="w-8 h-8 flex items-center justify-center"> {/* Larger icon container */}
-                                            {ServiceIcons[service.id] ||
-                                                <span>No Icon</span>} {/* Render service icon */}
+                                        <div className="w-8 h-8 flex items-center justify-center">
+                                            {ServiceIcons[service.id] || <span>No Icon</span>}
                                         </div>
-                                        <span
-                                            className="ml-4 text-lg">{service.name}</span> {/* Text with increased margin */}
+                                        <span className="ml-4 text-lg">
+                                            {getTranslatedName(service, 'service')}
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
@@ -186,7 +244,7 @@ export const Space = () => {
 
                 {/* Contact Information Section */}
                 <div className="mb-4">
-                    <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
+                    <h2 className="text-2xl font-semibold mb-4">{language === 'EN' ? 'Contact Info' : language === 'ES' ? 'Información de contacto' : 'Informació de contacte'}</h2>
                     <div className="space-y-4">
                         {/* Email */}
                         {space.email && (
@@ -263,7 +321,7 @@ export const Space = () => {
                     {/* Google Maps Embed */}
                     {space.address?.name && (
                         <div className="mt-6">
-                            <h3 className="text-xl font-semibold mb-4">Location</h3>
+                            <h3 className="text-xl font-semibold mb-4">{language === 'EN' ? 'Location' : language === 'ES' ? 'Ubicación' : 'Ubicació'}</h3>
                             <div className="w-full h-64 rounded-lg overflow-hidden shadow-lg">
                                 <iframe
                                     title="Google Maps Embed"
@@ -290,7 +348,7 @@ export const Space = () => {
                                     rel="noopener noreferrer"
                                     className="bg-[#149d80] text-white px-4 py-2 rounded-lg hover:bg-[#11866f] transition-colors"
                                 >
-                                    Get Directions
+                                    {language === 'EN' ? 'Get Directions' : language === 'ES' ? 'Obtener Dirección' : 'Obtenir Adreça'}
                                 </a>
                             </div>
                         </div>

@@ -1,11 +1,12 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import Slider from 'rc-slider';
 import modalityIcons from '../icons/ModalityIcons.jsx';
 import serviceIcons from '../icons/ServiceIcons.jsx';
 import axios from 'axios';
-import {useSearch} from '../contexts/FilterContext.jsx';
+import { useSearch } from '../contexts/FilterContext.jsx';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
 
-export const FilterModal = ({isOpen, onClose}) => {
+export const FilterModal = ({ isOpen, onClose }) => {
     const {
         selectedModalities,
         setSelectedModalities,
@@ -17,6 +18,7 @@ export const FilterModal = ({isOpen, onClose}) => {
 
     const [modalities, setModalities] = useState([]);
     const [services, setServices] = useState([]);
+    const { language } = useLanguage();
 
     useEffect(() => {
         const fetchModalities = async () => {
@@ -84,9 +86,9 @@ export const FilterModal = ({isOpen, onClose}) => {
                         <span className="text-sm text-gray-700">{ratingRange[0]}</span>
                         <Slider
                             styles={{
-                                track: {backgroundColor: '#149d80'},
-                                rail: {backgroundColor: '#e5e7eb'},
-                                handle: {backgroundColor: '#149d80'}
+                                track: { backgroundColor: '#149d80' },
+                                rail: { backgroundColor: '#e5e7eb' },
+                                handle: { backgroundColor: '#149d80' }
                             }}
                             range
                             value={ratingRange}
@@ -110,7 +112,7 @@ export const FilterModal = ({isOpen, onClose}) => {
                                 onClick={() => handleModalityClick(modality)}
                             >
                                 {modalityIcons[modality.id]}
-                                <span>{modality.description_EN}</span>
+                                <span>{modality[`description_${language}`]}</span>
                             </button>
                         ))}
                     </div>
@@ -127,7 +129,7 @@ export const FilterModal = ({isOpen, onClose}) => {
                                 onClick={() => handleServiceClick(service)}
                             >
                                 {serviceIcons[service.id]}
-                                <span>{service.description_EN}</span>
+                                <span>{service[`description_${language}`]}</span>
                             </button>
                         ))}
                     </div>

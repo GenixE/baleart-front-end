@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import {useLanguage} from "../contexts/LanguageContext.jsx";
 
-const AuthModal = ({ isOpen, onClose, type }) => {
+const AuthModal = ({isOpen, onClose, type}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const {language} = useLanguage();
 
     useEffect(() => {
         if (isOpen) {
@@ -24,7 +26,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const url = type === 'login' ? 'http://localhost:8000/api/login' : 'http://localhost:8000/api/register';
-        const data = type === 'login' ? { email, password } : {
+        const data = type === 'login' ? {email, password} : {
             name,
             lastName,
             email,
@@ -55,54 +57,60 @@ const AuthModal = ({ isOpen, onClose, type }) => {
             <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-sm max-h-6/7 overflow-y-auto">
                     <header className="flex justify-between items-center">
-                        <p className="title">{type === 'login' ? 'Login' : 'Register'} </p>
+                        <p className="title">
+                            {type === 'login'
+                                ? (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió')
+                                : (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')}
+                        </p>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                  stroke="currentColor" className="size-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </header>
                     <form className="form" onSubmit={handleSubmit}>
-                        <p className="message">{type === 'register' && 'Sign up to get full access to our app.'} </p>
+                        <p className="message">{type === 'register' && (language === 'EN' ? 'Sign up to get full access to our app.' : language === 'ES' ? 'Regístrese para obtener acceso completo a nuestra aplicación.' : 'Registra\'t per obtenir accés complet a la nostra aplicació.')} </p>
                         {type === 'register' && (
                             <>
                                 <label>
                                     <input required type="text" value={name}
-                                           onChange={(e) => setName(e.target.value)} className="input" />
-                                    <span>Firstname</span>
+                                           onChange={(e) => setName(e.target.value)} className="input"/>
+                                    <span>{language === 'EN' ? 'First Name' : language === 'ES' ? 'Nombres' : 'Noms'}</span>
                                 </label>
                                 <label>
                                     <input required type="text" value={lastName}
-                                           onChange={(e) => setLastName(e.target.value)} className="input" />
-                                    <span>Lastname</span>
+                                           onChange={(e) => setLastName(e.target.value)} className="input"/>
+                                    <span>{language === 'EN' ? 'Last Name' : language === 'ES' ? 'Apellidos' : 'Cognoms'}</span>
                                 </label>
                                 <label>
                                     <input required type="tel" value={phone}
-                                           onChange={(e) => setPhone(e.target.value)} className="input" />
-                                    <span>Phone number</span>
+                                           onChange={(e) => setPhone(e.target.value)} className="input"/>
+                                    <span>{language === 'EN' ? 'Phone Number' : language === 'ES' ? 'Número de teléfono' : 'Nombre de telèfon'}</span>
                                 </label>
                             </>
                         )}
                         <label>
                             <input required type="email" value={email}
-                                   onChange={(e) => setEmail(e.target.value)} className="input" />
+                                   onChange={(e) => setEmail(e.target.value)} className="input"/>
                             <span>Email</span>
                         </label>
                         <label>
                             <input required type="password" value={password}
-                                   onChange={(e) => setPassword(e.target.value)} className="input" />
-                            <span>Password</span>
+                                   onChange={(e) => setPassword(e.target.value)} className="input"/>
+                            <span>{language === 'EN' ? 'Password' : language === 'ES' ? 'Contraseña' : 'Contrasenya'}</span>
                         </label>
                         {type === 'register' && (
                             <label>
                                 <input required type="password"
                                        value={passwordConfirmation}
-                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input" />
-                                <span>Confirm password</span>
+                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input"/>
+                                <span>{language === 'EN' ? 'Confirm Password' : language === 'ES' ? 'Confirmar contraseña' : 'Confirmar contrasenya'}</span>
                             </label>
                         )}
-                        <button type="submit" className="submit">{type === 'login' ? 'Login' : 'Register'}</button>
+                        <button type="submit" className="submit">{type === 'login'
+                            ? (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió')
+                            : (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')}</button>
                     </form>
                 </div>
             </div>

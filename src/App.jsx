@@ -15,17 +15,20 @@ import { AccountSettings } from "./components/AccountSettings.jsx";
 import { LoginAndSecurity } from "./components/LoginAndSecurity.jsx";
 import { PersonalInfo } from "./components/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
-import { AuthProvider } from './contexts/AuthContext'; // Import the AuthProvider
+import { AuthProvider } from './contexts/AuthContext';
+import {LanguageProvider} from "./contexts/LanguageContext.jsx"; // Import the AuthProvider
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
-                <SearchProvider>
-                    <AppContent />
-                </SearchProvider>
-            </Router>
-        </AuthProvider>
+        <LanguageProvider>
+            <AuthProvider>
+                <Router>
+                    <SearchProvider>
+                        <AppContent />
+                    </SearchProvider>
+                </Router>
+            </AuthProvider>
+        </LanguageProvider>
     );
 }
 
