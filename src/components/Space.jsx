@@ -4,6 +4,143 @@ import ServiceIcons from "../icons/ServiceIcons.jsx";
 import ModalityIcons from "../icons/ModalityIcons.jsx";
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import axios from 'axios';
+import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
+
+// Image Modal Component
+const ImageModal = ({ imageUrl, onClose }) => {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+            <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-white text-3xl hover:text-gray-300"
+            >
+                <FiX />
+            </button>
+            <div className="max-w-90vw max-h-90vh">
+                <img
+                    src={imageUrl}
+                    alt="Expanded view"
+                    className="w-full h-full object-contain"
+                />
+            </div>
+        </div>
+    );
+};
+
+// Comment Component with Carousel
+const Comment = ({ comment, language, openModal }) => {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const images = comment.images || [];
+    const showCarousel = images.length > 3;
+
+    const handlePrev = () => {
+        setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    };
+
+    const handleNext = () => {
+        setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+    };
+
+    return (
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div className="flex gap-6">
+                {/* User Avatar */}
+                <div className="flex-shrink-0">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill={comment.user.color || '#149d80'}
+                        className="w-16 h-16 rounded-full"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+
+                {/* Comment Content */}
+                <div className="flex-grow">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-semibold">
+                            {comment.user.name} {comment.user.lastName}
+                        </h3>
+                        <div className="flex items-center mt-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="#149d80"
+                                className="w-5 h-5"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            <span className="ml-2 text-gray-600">{comment.score}</span>
+                        </div>
+                    </div>
+
+                    <p className="text-gray-700 mb-4">{comment.comment}</p>
+
+                    {images.length > 0 && (
+                        <div className="relative">
+                            {showCarousel ? (
+                                /* Carousel Layout */
+                                <div className="relative group">
+                                    <div className="flex overflow-hidden rounded-lg">
+                                        {images.map((image, index) => (
+                                            <img
+                                                key={image.id}
+                                                src={image.url}
+                                                alt="Comment"
+                                                onClick={() => openModal(image.url)}
+                                                className={`w-48 h-48 object-cover cursor-zoom-in transition-transform ${
+                                                    index === currentImageIndex
+                                                        ? 'translate-x-0'
+                                                        : 'absolute opacity-0'
+                                                }`}
+                                                style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        onClick={handlePrev}
+                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"
+                                    >
+                                        <FiChevronLeft size={24} />
+                                    </button>
+                                    <button
+                                        onClick={handleNext}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"
+                                    >
+                                        <FiChevronRight size={24} />
+                                    </button>
+                                </div>
+                            ) : (
+                                /* Grid Layout */
+                                <div className="flex flex-wrap gap-4">
+                                    {images.map((image) => (
+                                        <img
+                                            key={image.id}
+                                            src={image.url}
+                                            alt="Comment"
+                                            onClick={() => openModal(image.url)}
+                                            className="w-32 h-32 object-cover rounded-lg cursor-zoom-in hover:scale-105 transition-transform"
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export const Space = () => {
     const apiKey = import.meta.env.VITE_API_KEY;
@@ -13,6 +150,15 @@ export const Space = () => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
     const { language } = useLanguage();
+
+    // Add new state for image modal
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setIsModalOpen(true);
+    };
 
     // State for translations
     const [spaceTypes, setSpaceTypes] = useState([]);
@@ -165,6 +311,9 @@ export const Space = () => {
 
     return (
         <div className="flex flex-col items-center w-full mt-4">
+            {isModalOpen && (
+                <ImageModal imageUrl={selectedImage} onClose={() => setIsModalOpen(false)} />
+            )}
             <div className="max-w-5xl w-full bg-white shadow-lg rounded-lg p-6">
                 {/* Space Name and Ratings */}
                 <div className="flex justify-between items-center mb-4">
@@ -191,18 +340,25 @@ export const Space = () => {
                             <span className="ml-2 text-gray-700">
                                 {(space.totalScore / space.countScore).toFixed(1)}
                             </span>
+                            <span className="text-gray-500 ml-1">({space.countScore}) ratings</span>
                         </div>
                     ) : null}
                 </div>
 
                 {/* Photo */}
-                <div className="mb-4">
-                    <img
-                        src={image || 'https://via.placeholder.com/400'}
-                        alt={space.name}
-                        className="w-full h-full object-cover rounded-lg"
-                        onError={handleImageError}
-                    />
+                <div className="max-w-5xl w-full bg-white shadow-lg rounded-lg p-6">
+                    {/* Modified Main Image Section */}
+                    <div className="mb-8">
+                        <div className="relative group cursor-zoom-in" onClick={() => openModal(image)}>
+                            <img
+                                src={image || 'https://via.placeholder.com/400'}
+                                alt={space.name}
+                                className="w-full h-96 object-cover rounded-lg shadow-xl transition-transform duration-300 group-hover:scale-105"
+                                onError={handleImageError}
+                            />
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors rounded-lg" />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Space Type, Municipality, and Island */}
@@ -383,66 +539,18 @@ export const Space = () => {
 
                 {/* Comments Section */}
                 <div className="mt-8">
-                    <h2 className="text-2xl font-semibold mb-4">
+                    <h2 className="text-2xl font-semibold mb-6">
                         {language === 'EN' ? 'Comments' : language === 'ES' ? 'Comentarios' : 'Comentaris'}
                     </h2>
                     {currentComments.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {currentComments.map((comment) => (
-                                <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
-                                    {/* Comment User Details */}
-                                    <div className="flex items-center mb-2">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            fill={getRandomColor()}
-                                            className="w-6 h-6 text-gray-600"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                        <span className="ml-2 text-gray-700 font-medium">
-                            {comment.user.name} {comment.user.lastName}
-                        </span>
-                                    </div>
-
-                                    {/* Comment Text */}
-                                    <p className="text-gray-700">{comment.comment}</p>
-
-                                    {/* Comment Score */}
-                                    <div className="flex items-center mt-2">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            fill="#149d80"
-                                            className="w-5 h-5"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                        <span className="ml-2 text-gray-600">{comment.score}</span>
-                                    </div>
-
-                                    {/* Comment Images */}
-                                    {comment.images && comment.images.length > 0 && (
-                                        <div className="mt-4 flex space-x-2">
-                                            {comment.images.map((image) => (
-                                                <img
-                                                    key={image.id}
-                                                    src={image.url}
-                                                    alt="Comment"
-                                                    className="w-20 h-20 object-cover rounded-lg"
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                <Comment
+                                    key={comment.id}
+                                    comment={comment}
+                                    language={language}
+                                    openModal={openModal}
+                                />
                             ))}
                         </div>
                     ) : (
