@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import ServiceIcons from "../icons/ServiceIcons.jsx";
 import ModalityIcons from "../icons/ModalityIcons.jsx";
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import {useLanguage} from '../contexts/LanguageContext.jsx';
 import axios from 'axios';
-import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
+import {FiChevronLeft, FiChevronRight, FiX} from 'react-icons/fi';
 
 // Image Modal Component
-const ImageModal = ({ imageUrl, onClose }) => {
+const ImageModal = ({imageUrl, onClose}) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
             <button
                 onClick={onClose}
                 className="absolute top-4 right-4 text-white text-3xl hover:text-gray-300"
             >
-                <FiX />
+                <FiX/>
             </button>
             <div className="max-w-90vw max-h-90vh">
                 <img
@@ -28,7 +28,7 @@ const ImageModal = ({ imageUrl, onClose }) => {
 };
 
 // Comment Component with Carousel
-const Comment = ({ comment, language, openModal }) => {
+const Comment = ({comment, language, openModal}) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = comment.images || [];
     const showCarousel = images.length > 3;
@@ -102,7 +102,7 @@ const Comment = ({ comment, language, openModal }) => {
                                                         ? 'translate-x-0'
                                                         : 'absolute opacity-0'
                                                 }`}
-                                                style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                                                style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
                                             />
                                         ))}
                                     </div>
@@ -111,13 +111,13 @@ const Comment = ({ comment, language, openModal }) => {
                                         onClick={handlePrev}
                                         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"
                                     >
-                                        <FiChevronLeft size={24} />
+                                        <FiChevronLeft size={24}/>
                                     </button>
                                     <button
                                         onClick={handleNext}
                                         className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"
                                     >
-                                        <FiChevronRight size={24} />
+                                        <FiChevronRight size={24}/>
                                     </button>
                                 </div>
                             ) : (
@@ -144,12 +144,12 @@ const Comment = ({ comment, language, openModal }) => {
 
 export const Space = () => {
     const apiKey = import.meta.env.VITE_API_KEY;
-    const { id } = useParams();
+    const {id} = useParams();
     const [space, setSpace] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
-    const { language } = useLanguage();
+    const {language} = useLanguage();
 
     // Add new state for image modal
     const [selectedImage, setSelectedImage] = useState(null);
@@ -312,7 +312,7 @@ export const Space = () => {
     return (
         <div className="flex flex-col items-center w-full mt-4">
             {isModalOpen && (
-                <ImageModal imageUrl={selectedImage} onClose={() => setIsModalOpen(false)} />
+                <ImageModal imageUrl={selectedImage} onClose={() => setIsModalOpen(false)}/>
             )}
             <div className="max-w-5xl w-full bg-white shadow-lg rounded-lg p-6">
                 {/* Space Name and Ratings */}
@@ -356,7 +356,7 @@ export const Space = () => {
                                 className="w-full h-96 object-cover rounded-lg shadow-xl transition-transform duration-300 group-hover:scale-105"
                                 onError={handleImageError}
                             />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors rounded-lg" />
+                            <div className="absolute inset-0 group-hover: transition-colors rounded-lg"/>
                         </div>
                     </div>
                 </div>
@@ -562,7 +562,7 @@ export const Space = () => {
                     {/* Pagination */}
                     {comments.length > commentsPerPage && (
                         <div className="flex justify-center mt-6">
-                            {Array.from({ length: Math.ceil(comments.length / commentsPerPage) }, (_, i) => (
+                            {Array.from({length: Math.ceil(comments.length / commentsPerPage)}, (_, i) => (
                                 <button
                                     key={i + 1}
                                     onClick={() => paginate(i + 1)}
