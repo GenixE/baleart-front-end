@@ -16,7 +16,8 @@ import { LoginAndSecurity } from "./components/LoginAndSecurity.jsx";
 import { PersonalInfo } from "./components/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
 import { AuthProvider } from './contexts/AuthContext';
-import {LanguageProvider} from "./contexts/LanguageContext.jsx"; // Import the AuthProvider
+import {LanguageProvider} from "./contexts/LanguageContext.jsx";
+import {MyComment} from "./components/MyComment.jsx"; // Import the AuthProvider
 
 function App() {
     return (
@@ -75,10 +76,10 @@ function AppContent() {
                             }
                         />
                         <Route
-                            path="/comments"
+                            path="/my-comments"
                             element={
                                 <PrivateRoute>
-                                    <AccountSettings />
+                                    <MyComment />
                                 </PrivateRoute>
                             }
                         />

@@ -218,7 +218,7 @@ export const Header = () => {
                                                     {language === 'EN' ? 'My Account' : language === 'ES' ? 'Mi cuenta' : 'El meu compte'}
                                                 </Link>
                                                 <Link
-                                                    to="/comments"
+                                                    to="/my-comments"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
                                                     {language === 'EN' ? 'My comments' : language === 'ES' ? 'Mis comentarios' : 'Els meus comentaris'}

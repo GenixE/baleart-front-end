@@ -5,10 +5,10 @@ import ModalityIcons from "../icons/ModalityIcons.jsx";
 import {useLanguage} from '../contexts/LanguageContext.jsx';
 import axios from 'axios';
 import {FiChevronLeft, FiChevronRight, FiX} from 'react-icons/fi';
-import { useAuth } from '../contexts/AuthContext';
+import {useAuth} from '../contexts/AuthContext';
 
 // Star Rating Component
-const StarRating = ({ rating, setRating }) => {
+const StarRating = ({rating, setRating}) => {
     return (
         <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -16,8 +16,7 @@ const StarRating = ({ rating, setRating }) => {
                     key={star}
                     type="button"
                     onClick={() => setRating(star)}
-                    className={`text-2xl ${rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
-                >
+                    className={`text-2xl ${rating >= star ? 'text-[#149d80]' : 'text-gray-300'}`}>
                     ★
                 </button>
             ))}
@@ -185,7 +184,7 @@ export const Space = () => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
     const {language} = useLanguage();
-    const { isLoggedIn } = useAuth();
+    const {isLoggedIn} = useAuth();
     const [rating, setRating] = useState(0);
     const [commentText, setCommentText] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
@@ -645,7 +644,7 @@ export const Space = () => {
                                 <label className="block text-gray-700 mb-2">
                                     {language === 'EN' ? 'Rating' : language === 'ES' ? 'Valoración' : 'Valoració'}
                                 </label>
-                                <StarRating rating={rating} setRating={setRating} />
+                                <StarRating rating={rating} setRating={setRating}/>
                             </div>
 
                             <div className="mb-4">
