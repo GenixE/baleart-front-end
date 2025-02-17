@@ -5,6 +5,25 @@ import ModalityIcons from "../icons/ModalityIcons.jsx";
 import {useLanguage} from '../contexts/LanguageContext.jsx';
 import axios from 'axios';
 import {FiChevronLeft, FiChevronRight, FiX} from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+
+// Star Rating Component
+const StarRating = ({ rating, setRating }) => {
+    return (
+        <div className="flex gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    className={`text-2xl ${rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                >
+                    ★
+                </button>
+            ))}
+        </div>
+    );
+};
 
 // Image Modal Component
 const ImageModal = ({imageUrl, onClose}) => {
@@ -91,20 +110,28 @@ const Comment = ({comment, language, openModal}) => {
                                 /* Carousel Layout */
                                 <div className="relative group">
                                     <div className="flex overflow-hidden rounded-lg">
-                                        {images.map((image, index) => (
-                                            <img
-                                                key={image.id}
-                                                src={image.url}
-                                                alt="Comment"
-                                                onClick={() => openModal(image.url)}
-                                                className={`w-48 h-48 object-cover cursor-zoom-in transition-transform ${
-                                                    index === currentImageIndex
-                                                        ? 'translate-x-0'
-                                                        : 'absolute opacity-0'
-                                                }`}
-                                                style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
-                                            />
-                                        ))}
+                                        {images.map((image, index) => {
+                                            // Check if image is stored locally
+                                            const isLocalImage = !image.url.startsWith('http');
+                                            const imageUrl = isLocalImage
+                                                ? `http://localhost:8000/storage/${image.url}`
+                                                : image.url;
+
+                                            return (
+                                                <img
+                                                    key={image.id}
+                                                    src={imageUrl}
+                                                    alt="Comment"
+                                                    onClick={() => openModal(imageUrl)}
+                                                    className={`w-48 h-48 object-cover cursor-zoom-in transition-transform ${
+                                                        index === currentImageIndex
+                                                            ? 'translate-x-0'
+                                                            : 'absolute opacity-0'
+                                                    }`}
+                                                    style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
+                                                />
+                                            );
+                                        })}
                                     </div>
 
                                     <button
@@ -123,15 +150,23 @@ const Comment = ({comment, language, openModal}) => {
                             ) : (
                                 /* Grid Layout */
                                 <div className="flex flex-wrap gap-4">
-                                    {images.map((image) => (
-                                        <img
-                                            key={image.id}
-                                            src={image.url}
-                                            alt="Comment"
-                                            onClick={() => openModal(image.url)}
-                                            className="w-32 h-32 object-cover rounded-lg cursor-zoom-in hover:scale-105 transition-transform"
-                                        />
-                                    ))}
+                                    {images.map((image) => {
+                                        // Check if image is stored locally
+                                        const isLocalImage = !image.url.startsWith('http');
+                                        const imageUrl = isLocalImage
+                                            ? `http://localhost:8000/storage/${image.url}`
+                                            : image.url;
+
+                                        return (
+                                            <img
+                                                key={image.id}
+                                                src={imageUrl}
+                                                alt="Comment"
+                                                onClick={() => openModal(imageUrl)}
+                                                className="w-32 h-32 object-cover rounded-lg cursor-zoom-in hover:scale-105 transition-transform"
+                                            />
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -150,6 +185,57 @@ export const Space = () => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
     const {language} = useLanguage();
+    const { isLoggedIn } = useAuth();
+    const [rating, setRating] = useState(0);
+    const [commentText, setCommentText] = useState('');
+    const [selectedImages, setSelectedImages] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+
+    const handleSubmitComment = async (e) => {
+        e.preventDefault();
+        if (!rating || !commentText.trim()) {
+            setSubmitError('Rating and comment are required.');
+            return;
+        }
+
+        setSubmitting(true);
+        setSubmitError('');
+
+        const formData = new FormData();
+        formData.append('comment', commentText);
+        formData.append('score', rating);
+        formData.append('space_id', id);
+
+        selectedImages.forEach((image) => {
+            formData.append('images[]', image);
+        });
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                'http://localhost:8000/api/comments',
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // ← MUST include this
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+
+            // Add new comment to top of comments list
+            setComments(prev => [response.data, ...prev]);
+            setCommentText('');
+            setRating(0);
+            setSelectedImages([]);
+        } catch (error) {
+            setSubmitError(error.response?.data?.message || 'Failed to submit comment');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
 
     // Add new state for image modal
     const [selectedImage, setSelectedImage] = useState(null);
@@ -536,6 +622,70 @@ export const Space = () => {
 
                 {/* Line Break */}
                 <hr className="my-4 text-gray-300"/>
+
+                {/* Comment Form */}
+                <div className="mt-8">
+                    <h2 className="text-2xl font-semibold mb-6">
+                        {language === 'EN' ? 'Leave a Comment' : language === 'ES' ? 'Dejar un comentario' : 'Deixar un comentari'}
+                    </h2>
+
+                    {!isLoggedIn ? (
+                        <p className="text-gray-600">
+                            {language === 'EN'
+                                ? 'Please log in to leave a comment.'
+                                : language === 'ES'
+                                    ? 'Por favor inicie sesión para comentar.'
+                                    : 'Si us plau, inicieu sessió per comentar.'}
+                        </p>
+                    ) : (
+                        <form onSubmit={handleSubmitComment} className="bg-white p-6 rounded-lg shadow-md">
+                            {submitError && <div className="text-red-500 mb-4">{submitError}</div>}
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 mb-2">
+                                    {language === 'EN' ? 'Rating' : language === 'ES' ? 'Valoración' : 'Valoració'}
+                                </label>
+                                <StarRating rating={rating} setRating={setRating} />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 mb-2">
+                                    {language === 'EN' ? 'Comment' : language === 'ES' ? 'Comentario' : 'Comentari'}
+                                </label>
+                                <textarea
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
+                                    className="w-full p-3 border rounded-lg"
+                                    rows="4"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 mb-2">
+                                    {language === 'EN' ? 'Upload Images (optional)' : language === 'ES' ? 'Subir imágenes (opcional)' : 'Pujar imatges (opcional)'}
+                                </label>
+                                <input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) => setSelectedImages([...e.target.files])}
+                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#149d80] file:text-white hover:file:bg-[#11866f]"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={submitting}
+                                className="bg-[#149d80] text-white px-6 py-2 rounded-lg hover:bg-[#11866f] disabled:bg-gray-400 transition-colors"
+                            >
+                                {submitting ?
+                                    (language === 'EN' ? 'Submitting...' : language === 'ES' ? 'Enviando...' : 'Enviant...') :
+                                    (language === 'EN' ? 'Submit Comment' : language === 'ES' ? 'Enviar comentario' : 'Enviar comentari')}
+                            </button>
+                        </form>
+                    )}
+                </div>
 
                 {/* Comments Section */}
                 <div className="mt-8">
