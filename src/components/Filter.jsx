@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation, Pagination} from 'swiper/modules';
-import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
+import spaceTypeIcons from '../assets/icons/SpaceTypeIcons.jsx';
 import {FilterModal} from './FilterModal.jsx';
 import {useSearch} from '../contexts/FilterContext.jsx';
 import {useLanguage} from '../contexts/LanguageContext.jsx';

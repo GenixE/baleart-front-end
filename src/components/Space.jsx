@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import ServiceIcons from "../icons/ServiceIcons.jsx";
-import ModalityIcons from "../icons/ModalityIcons.jsx";
+import ServiceIcons from "../assets/icons/ServiceIcons.jsx";
+import ModalityIcons from "../assets/icons/ModalityIcons.jsx";
 import {useLanguage} from '../contexts/LanguageContext.jsx';
 import axios from 'axios';
 import {FiChevronLeft, FiChevronRight, FiX} from 'react-icons/fi';
