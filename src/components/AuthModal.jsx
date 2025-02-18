@@ -1,16 +1,21 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 import axios from 'axios';
-import {useLanguage} from "../contexts/LanguageContext.jsx";
 
-const AuthModal = ({isOpen, onClose, type}) => {
+const AuthModal = ({ isOpen, onClose, type }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const {language} = useLanguage();
+    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const { language } = useLanguage();
 
     useEffect(() => {
         if (isOpen) {
@@ -25,8 +30,9 @@ const AuthModal = ({isOpen, onClose, type}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
         const url = type === 'login' ? 'http://localhost:8000/api/login' : 'http://localhost:8000/api/register';
-        const data = type === 'login' ? {email, password} : {
+        const data = type === 'login' ? { email, password } : {
             name,
             lastName,
             email,
@@ -37,16 +43,52 @@ const AuthModal = ({isOpen, onClose, type}) => {
 
         try {
             const response = await axios.post(url, data);
-            console.log('Response:', response.data);
-
-            // Store the token and email in localStorage
             localStorage.setItem('token', response.data.access_token);
-            localStorage.setItem('email', email); // Store the email in localStorage
-
+            localStorage.setItem('email', email);
             onClose();
-            window.location.reload(); // Reload to update the UI
+            window.location.reload();
         } catch (error) {
             console.error('Error:', error);
+            setErrorMessage(error.response?.data?.message || 'An error occurred. Please try again.');
+        }
+    };
+
+    const handleForgotPasswordSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMessage('');
+        try {
+            if (newPassword !== newPasswordConfirmation) {
+                setErrorMessage(
+                    language === 'EN' ? "Passwords don't match!" :
+                        language === 'ES' ? "¡Las contraseñas no coinciden!" :
+                            "Les contrasenyes no coincideixen!"
+                );
+                return;
+            }
+
+            const response = await axios.post('http://localhost:8000/api/reset-password', {
+                email: resetEmail,
+                password: newPassword,
+                password_confirmation: newPasswordConfirmation
+            });
+
+            alert(
+                language === 'EN' ? 'Password reset successfully.' :
+                    language === 'ES' ? 'Contraseña restablecida con éxito.' :
+                        'Contrasenya restablida amb èxit.'
+            );
+            setIsForgotPasswordOpen(false);
+            setResetEmail('');
+            setNewPassword('');
+            setNewPasswordConfirmation('');
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage(
+                error.response?.data?.message ||
+                (language === 'EN' ? 'Error resetting password. Please check your inputs.' :
+                    language === 'ES' ? 'Error al restablecer la contraseña. Por favor, verifica tus entradas.' :
+                        'Error en restablir la contrasenya. Si us plau, verifica les teves entrades.')
+            );
         }
     };
 
@@ -58,62 +100,148 @@ const AuthModal = ({isOpen, onClose, type}) => {
                 <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-sm max-h-6/7 overflow-y-auto">
                     <header className="flex justify-between items-center">
                         <p className="title">
-                            {type === 'login'
-                                ? (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió')
-                                : (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')}
+                            {type === 'login' ?
+                                (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió') :
+                                (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')
+                            }
                         </p>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                  stroke="currentColor" className="size-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </header>
+                    {errorMessage && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            {errorMessage}
+                        </div>
+                    )}
                     <form className="form" onSubmit={handleSubmit}>
-                        <p className="message">{type === 'register' && (language === 'EN' ? 'Sign up to get full access to our app.' : language === 'ES' ? 'Regístrese para obtener acceso completo a nuestra aplicación.' : 'Registra\'t per obtenir accés complet a la nostra aplicació.')} </p>
+                        <p className="message">
+                            {type === 'register' &&
+                                (language === 'EN' ? 'Sign up to get full access to our app.' :
+                                    language === 'ES' ? 'Regístrate para obtener acceso completo a nuestra aplicación.' :
+                                        'Registra\'t per obtenir accés complet a la nostra aplicació.')
+                            }
+                        </p>
                         {type === 'register' && (
                             <>
                                 <label>
                                     <input required type="text" value={name}
-                                           onChange={(e) => setName(e.target.value)} className="input"/>
-                                    <span>{language === 'EN' ? 'First Name' : language === 'ES' ? 'Nombres' : 'Noms'}</span>
+                                           onChange={(e) => setName(e.target.value)} className="input" />
+                                    <span>
+                                        {language === 'EN' ? 'Firstname' : language === 'ES' ? 'Nombre' : 'Nom'}
+                                    </span>
                                 </label>
                                 <label>
                                     <input required type="text" value={lastName}
-                                           onChange={(e) => setLastName(e.target.value)} className="input"/>
-                                    <span>{language === 'EN' ? 'Last Name' : language === 'ES' ? 'Apellidos' : 'Cognoms'}</span>
+                                           onChange={(e) => setLastName(e.target.value)} className="input" />
+                                    <span>
+                                        {language === 'EN' ? 'Lastname' : language === 'ES' ? 'Apellido' : 'Cognom'}
+                                    </span>
                                 </label>
                                 <label>
                                     <input required type="tel" value={phone}
-                                           onChange={(e) => setPhone(e.target.value)} className="input"/>
-                                    <span>{language === 'EN' ? 'Phone Number' : language === 'ES' ? 'Número de teléfono' : 'Nombre de telèfon'}</span>
+                                           onChange={(e) => setPhone(e.target.value)} className="input" />
+                                    <span>
+                                        {language === 'EN' ? 'Phone number' : language === 'ES' ? 'Número de teléfono' : 'Número de telèfon'}
+                                    </span>
                                 </label>
                             </>
                         )}
                         <label>
                             <input required type="email" value={email}
-                                   onChange={(e) => setEmail(e.target.value)} className="input"/>
-                            <span>Email</span>
+                                   onChange={(e) => setEmail(e.target.value)} className="input" />
+                            <span>
+                                {language === 'EN' ? 'Email' : language === 'ES' ? 'Correo electrónico' : 'Correu electrònic'}
+                            </span>
                         </label>
                         <label>
                             <input required type="password" value={password}
-                                   onChange={(e) => setPassword(e.target.value)} className="input"/>
-                            <span>{language === 'EN' ? 'Password' : language === 'ES' ? 'Contraseña' : 'Contrasenya'}</span>
+                                   onChange={(e) => setPassword(e.target.value)} className="input" />
+                            <span>
+                                {language === 'EN' ? 'Password' : language === 'ES' ? 'Contraseña' : 'Contrasenya'}
+                            </span>
                         </label>
                         {type === 'register' && (
                             <label>
                                 <input required type="password"
                                        value={passwordConfirmation}
-                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input"/>
-                                <span>{language === 'EN' ? 'Confirm Password' : language === 'ES' ? 'Confirmar contraseña' : 'Confirmar contrasenya'}</span>
+                                       onChange={(e) => setPasswordConfirmation(e.target.value)} className="input" />
+                                <span>
+                                    {language === 'EN' ? 'Confirm password' : language === 'ES' ? 'Confirmar contraseña' : 'Confirmar contrasenya'}
+                                </span>
                             </label>
                         )}
-                        <button type="submit" className="submit">{type === 'login'
-                            ? (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió')
-                            : (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')}</button>
+                        <button type="submit" className="submit">
+                            {type === 'login' ?
+                                (language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió') :
+                                (language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se')
+                            }
+                        </button>
+                        {type === 'login' && (
+                            <p className="text-center mt-4">
+                                <a href="#" onClick={() => setIsForgotPasswordOpen(true)}
+                                   className="text-[#149d80] hover:text-[#0f7a63]">
+                                    {language === 'EN' ? 'Forgot Password?' : language === 'ES' ? '¿Olvidaste tu contraseña?' : 'Has oblidat la contrasenya?'}
+                                </a>
+                            </p>
+                        )}
                     </form>
                 </div>
             </div>
+
+            {isForgotPasswordOpen && (
+                <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-sm max-h-6/7 overflow-y-auto">
+                        <header className="flex justify-between items-center">
+                            <p className="title">
+                                {language === 'EN' ? 'Reset Password' : language === 'ES' ? 'Restablecer contraseña' : 'Restablir contrasenya'}
+                            </p>
+                            <button onClick={() => setIsForgotPasswordOpen(false)}
+                                    className="text-gray-500 hover:text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     strokeWidth={1.5}
+                                     stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </header>
+                        {errorMessage && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                                {errorMessage}
+                            </div>
+                        )}
+                        <form className="form" onSubmit={handleForgotPasswordSubmit}>
+                            <label>
+                                <input required type="email" value={resetEmail}
+                                       onChange={(e) => setResetEmail(e.target.value)} className="input" />
+                                <span>
+                                    {language === 'EN' ? 'Email' : language === 'ES' ? 'Correo electrónico' : 'Correu electrònic'}
+                                </span>
+                            </label>
+                            <label>
+                                <input required type="password" value={newPassword}
+                                       onChange={(e) => setNewPassword(e.target.value)} className="input" />
+                                <span>
+                                    {language === 'EN' ? 'New Password' : language === 'ES' ? 'Nueva contraseña' : 'Nova contrasenya'}
+                                </span>
+                            </label>
+                            <label>
+                                <input required type="password" value={newPasswordConfirmation}
+                                       onChange={(e) => setNewPasswordConfirmation(e.target.value)} className="input" />
+                                <span>
+                                    {language === 'EN' ? 'Confirm New Password' : language === 'ES' ? 'Confirmar nueva contraseña' : 'Confirmar nova contrasenya'}
+                                </span>
+                            </label>
+                            <button type="submit" className="submit">
+                                {language === 'EN' ? 'Reset Password' : language === 'ES' ? 'Restablecer contraseña' : 'Restablir contrasenya'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </StyledWrapper>
     );
 };

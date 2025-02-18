@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import { useSearch } from '../contexts/FilterContext.jsx';
-import { Link } from 'react-router-dom';
+import {useEffect, useRef, useState} from 'react';
+import {useSearch} from '../contexts/FilterContext.jsx';
+import {Link} from 'react-router-dom';
 import AuthModal from './AuthModal';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import {useAuth} from '../contexts/AuthContext';
+import {useLanguage} from '../contexts/LanguageContext.jsx';
 
 export const Header = () => {
-    const { searchQuery, setSearchQuery, selectedIsland, setSelectedIsland } = useSearch();
+    const {searchQuery, setSearchQuery, selectedIsland, setSelectedIsland} = useSearch();
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -15,8 +15,8 @@ export const Header = () => {
     const userDropdownRef = useRef(null);
     const languageDropdownRef = useRef(null);
     const [islands, setIslands] = useState([]);
-    const { isLoggedIn, logout } = useAuth();
-    const { language, setLanguage } = useLanguage();
+    const {isLoggedIn, logout} = useAuth();
+    const {language, setLanguage} = useLanguage();
 
     const toggleUserDropdown = () => {
         setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -93,7 +93,7 @@ export const Header = () => {
                     <div className="flex items-center w-full">
                         <div className="flex-shrink-0 pr-40">
                             <a href="/">
-                                <img src="/baleart.svg" alt="baleart" className="w-32 sm:w-40 md:w-45 h-15 pr-2" />
+                                <img src="/baleart.svg" alt="baleart" className="w-32 sm:w-40 md:w-45 h-15 pr-2"/>
                             </a>
                         </div>
 
@@ -106,20 +106,23 @@ export const Header = () => {
                                             onChange={handleIslandChange}
                                             className="appearance-none bg-white border border-gray-300 shadow-sm rounded-l-full py-3 pl-6 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 h-12"
                                         >
-                                            <option value="all">{language === 'EN' ? 'All' : language === 'ES' ? 'Todos' : 'Tots'}</option>
+                                            <option
+                                                value="all">{language === 'EN' ? 'All' : language === 'ES' ? 'Todos' : 'Tots'}</option>
                                             {islands.map((island) => (
                                                 <option key={island.id} value={island.id}>
                                                     {island.name}
                                                 </option>
                                             ))}
                                         </select>
-                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                        <div
+                                            className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                             <svg
                                                 className="fill-current h-4 w-4"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20"
                                             >
-                                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                                <path
+                                                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                                             </svg>
                                         </div>
                                     </div>
@@ -152,7 +155,8 @@ export const Header = () => {
                                     </svg>
                                 </button>
                                 {isLanguageDropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                                    <div
+                                        className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                         <button
                                             onClick={() => handleLanguageChange('EN')}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
@@ -208,7 +212,8 @@ export const Header = () => {
                                     </svg>
                                 </button>
                                 {isUserDropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                                    <div
+                                        className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                         {isLoggedIn ? (
                                             <>
                                                 <Link
@@ -221,7 +226,7 @@ export const Header = () => {
                                                     to="/my-comments"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'My comments' : language === 'ES' ? 'Mis comentarios' : 'Els meus comentaris'}
+                                                    {language === 'EN' ? 'My Comments' : language === 'ES' ? 'Mis comentarios' : 'Els meus comentaris'}
                                                 </Link>
                                                 <button
                                                     onClick={handleLogout}
@@ -259,7 +264,7 @@ export const Header = () => {
                     </div>
                 </div>
             </header>
-            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} type={authModalType} />
+            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} type={authModalType}/>
         </>
     );
 };

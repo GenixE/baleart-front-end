@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Navigation, Pagination} from 'swiper/modules';
 import spaceTypeIcons from '../icons/SpaceTypeIcons.jsx';
-import { FilterModal } from './FilterModal.jsx';
-import { useSearch } from '../contexts/FilterContext.jsx';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import {FilterModal} from './FilterModal.jsx';
+import {useSearch} from '../contexts/FilterContext.jsx';
+import {useLanguage} from '../contexts/LanguageContext.jsx';
 
 export const Filter = () => {
-    const { selectedSpaceTypes, setSelectedSpaceTypes } = useSearch();
+    const {selectedSpaceTypes, setSelectedSpaceTypes} = useSearch();
     const [spaceTypes, setSpaceTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sliderValue, setSliderValue] = useState([0, 5]);
     const [loading, setLoading] = useState(true);
-    const { language } = useLanguage();
+    const {language} = useLanguage();
 
     useEffect(() => {
         const fetchSpaceTypes = async () => {
@@ -33,10 +33,11 @@ export const Filter = () => {
     const handleFilterClick = (type) => {
         setSelectedSpaceTypes(prevSelectedTypes => {
             const isTypeSelected = prevSelectedTypes.includes(type.id);
-            const newSelectedTypes = isTypeSelected
-                ? prevSelectedTypes.filter(id => id !== type.id)
-                : [...prevSelectedTypes, type.id];
-            return newSelectedTypes;
+            if (isTypeSelected) {
+                return [];
+            } else {
+                return [type.id];
+            }
         });
     };
 
@@ -66,11 +67,11 @@ export const Filter = () => {
                         <Swiper
                             modules={[Navigation, Pagination]}
                             breakpoints={{
-                                320: { slidesPerView: 3 },
-                                480: { slidesPerView: 5 },
-                                720: { slidesPerView: 8 },
-                                1000: { slidesPerView: 12 },
-                                2000: { slidesPerView: 15 },
+                                320: {slidesPerView: 3},
+                                480: {slidesPerView: 5},
+                                720: {slidesPerView: 8},
+                                1000: {slidesPerView: 12},
+                                2000: {slidesPerView: 15},
                             }}
                             navigation={{
                                 nextEl: '.swiper-button-next',

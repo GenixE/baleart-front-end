@@ -47,17 +47,26 @@ const ImageModal = ({imageUrl, onClose}) => {
 
 // Comment Component with Carousel
 const Comment = ({comment, language, openModal}) => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
     const images = comment.images || [];
-    const showCarousel = images.length > 3;
+    const imagesPerGroup = 4; // Number of images to show at once
+    const showCarousel = images.length > imagesPerGroup;
 
     const handlePrev = () => {
-        setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+        setCurrentGroupIndex((prevIndex) =>
+            prevIndex === 0 ? Math.ceil(images.length / imagesPerGroup) - 1 : prevIndex - 1
+        );
     };
 
     const handleNext = () => {
-        setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+        setCurrentGroupIndex((prevIndex) =>
+            prevIndex === Math.ceil(images.length / imagesPerGroup) - 1 ? 0 : prevIndex + 1
+        );
     };
+
+    // Calculate the images to display in the current group
+    const startIndex = currentGroupIndex * imagesPerGroup;
+    const visibleImages = images.slice(startIndex, startIndex + imagesPerGroup);
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -108,9 +117,8 @@ const Comment = ({comment, language, openModal}) => {
                             {showCarousel ? (
                                 /* Carousel Layout */
                                 <div className="relative group">
-                                    <div className="flex overflow-hidden rounded-lg">
-                                        {images.map((image, index) => {
-                                            // Check if image is stored locally
+                                    <div className="flex overflow-hidden rounded-lg gap-4">
+                                        {visibleImages.map((image) => {
                                             const isLocalImage = !image.url.startsWith('http');
                                             const imageUrl = isLocalImage
                                                 ? `http://localhost:8000/storage/${image.url}`
@@ -122,17 +130,13 @@ const Comment = ({comment, language, openModal}) => {
                                                     src={imageUrl}
                                                     alt="Comment"
                                                     onClick={() => openModal(imageUrl)}
-                                                    className={`w-48 h-48 object-cover cursor-zoom-in transition-transform ${
-                                                        index === currentImageIndex
-                                                            ? 'translate-x-0'
-                                                            : 'absolute opacity-0'
-                                                    }`}
-                                                    style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
+                                                    className="w-48 h-48 object-cover cursor-zoom-in transition-transform duration-300 ease-in-out"
                                                 />
                                             );
                                         })}
                                     </div>
 
+                                    {/* Navigation Buttons */}
                                     <button
                                         onClick={handlePrev}
                                         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"
@@ -150,7 +154,6 @@ const Comment = ({comment, language, openModal}) => {
                                 /* Grid Layout */
                                 <div className="flex flex-wrap gap-4">
                                     {images.map((image) => {
-                                        // Check if image is stored locally
                                         const isLocalImage = !image.url.startsWith('http');
                                         const imageUrl = isLocalImage
                                             ? `http://localhost:8000/storage/${image.url}`
