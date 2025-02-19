@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Header } from "./components/Header.jsx";
+import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
+import {Header} from "./components/Header.jsx";
 import 'swiper/css/bundle';
 import './css/navbutton.css';
 import './css/pagination.css';
@@ -7,15 +7,15 @@ import './css/loading.css';
 import './css/modal.css';
 import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
-import { SearchProvider } from './contexts/FilterContext.jsx';
-import { Filter } from "./components/Filter.jsx";
+import {SearchProvider} from './contexts/FilterContext.jsx';
+import {Filter} from "./components/Filter.jsx";
 import Space from './components/space/Space.jsx';
-import { Navigate } from "react-router";
-import { MyAccountSettings } from "./components/MyAccountSettings.jsx";
-import { LoginAndSecurity } from "./components/LoginAndSecurity.jsx";
-import { PersonalInfo } from "./components/PersonalInfo.jsx";
+import {Navigate} from "react-router";
+import {MyAccountSettings} from "./components/MyAccountSettings.jsx";
+import {LoginAndSecurity} from "./components/LoginAndSecurity.jsx";
+import {PersonalInfo} from "./components/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
-import { AuthProvider } from './contexts/AuthContext';
+import {AuthProvider} from './contexts/AuthContext';
 import {LanguageProvider} from "./contexts/LanguageContext.jsx";
 import {MyComment} from "./components/MyComment.jsx"; // Import the AuthProvider
 
@@ -25,7 +25,7 @@ function App() {
             <AuthProvider>
                 <Router>
                     <SearchProvider>
-                        <AppContent />
+                        <AppContent/>
                     </SearchProvider>
                 </Router>
             </AuthProvider>
@@ -39,23 +39,23 @@ function AppContent() {
     return (
         <>
             <div className="sticky top-0 z-50 bg-white shadow-sm">
-                <Header />
+                <Header/>
                 {/* Render Filter only on the main route (/) */}
-                {location.pathname === '/' && <Filter />}
+                {location.pathname === '/' && <Filter/>}
             </div>
             <div className="mx-20 my-2">
                 <div className="flex flex-row flex-wrap justify-center gap-4 mx-4">
                     <Routes>
-                        <Route path="/" element={<ListSpace />} />
-                        <Route path="/space/:id" element={<Space />} />
-                        <Route path="*" element={<Navigate to="/" />} />
+                        <Route path="/" element={<ListSpace/>}/>
+                        <Route path="/space/:id" element={<Space/>}/>
+                        <Route path="*" element={<Navigate to="/"/>}/>
 
                         {/* Protected Routes */}
                         <Route
                             path="/account-settings"
                             element={
                                 <PrivateRoute>
-                                    <MyAccountSettings />
+                                    <MyAccountSettings/>
                                 </PrivateRoute>
                             }
                         />
@@ -63,7 +63,7 @@ function AppContent() {
                             path="/account-settings/personal-info"
                             element={
                                 <PrivateRoute>
-                                    <PersonalInfo />
+                                    <PersonalInfo/>
                                 </PrivateRoute>
                             }
                         />
@@ -71,7 +71,7 @@ function AppContent() {
                             path="/account-settings/login-and-security"
                             element={
                                 <PrivateRoute>
-                                    <LoginAndSecurity />
+                                    <LoginAndSecurity/>
                                 </PrivateRoute>
                             }
                         />
@@ -79,7 +79,7 @@ function AppContent() {
                             path="/my-comments"
                             element={
                                 <PrivateRoute>
-                                    <MyComment />
+                                    <MyComment/>
                                 </PrivateRoute>
                             }
                         />
