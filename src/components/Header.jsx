@@ -5,6 +5,8 @@ import AuthModal from './AuthModal';
 import axios from 'axios';
 import {useAuth} from '../contexts/AuthContext';
 import {useLanguage} from '../contexts/LanguageContext.jsx';
+import { translations } from '../translations/translations';
+
 
 export const Header = () => {
     const {searchQuery, setSearchQuery, selectedIsland, setSelectedIsland} = useSearch();
@@ -107,7 +109,7 @@ export const Header = () => {
                                             className="appearance-none bg-white border border-gray-300 shadow-sm rounded-l-full py-3 pl-6 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 h-12"
                                         >
                                             <option
-                                                value="all">{language === 'EN' ? 'All' : language === 'ES' ? 'Todos' : 'Tots'}</option>
+                                                value="all">{translations.header.all[language]}</option>
                                             {islands.map((island) => (
                                                 <option key={island.id} value={island.id}>
                                                     {island.name}
@@ -131,7 +133,7 @@ export const Header = () => {
                                         type="text"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
-                                        placeholder="Search"
+                                        placeholder={translations.header.search[language]}
                                         className="flex-grow py-3 pl-6 pr-12 rounded-r-full border border-gray-300 shadow-sm focus:outline-none focus:border-gray-500 h-12"
                                     />
                                 </div>
@@ -161,19 +163,19 @@ export const Header = () => {
                                             onClick={() => handleLanguageChange('EN')}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         >
-                                            English
+                                            {translations.header.english[language]}
                                         </button>
                                         <button
                                             onClick={() => handleLanguageChange('ES')}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         >
-                                            Spanish
+                                            {translations.header.spanish[language]}
                                         </button>
                                         <button
                                             onClick={() => handleLanguageChange('CA')}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         >
-                                            Catalan
+                                            {translations.header.catalan[language]}
                                         </button>
                                     </div>
                                 )}
@@ -220,19 +222,19 @@ export const Header = () => {
                                                     to="/account-settings"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'My Account' : language === 'ES' ? 'Mi cuenta' : 'El meu compte'}
+                                                    {translations.header.account[language]}
                                                 </Link>
                                                 <Link
                                                     to="/my-comments"
                                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'My Comments' : language === 'ES' ? 'Mis comentarios' : 'Els meus comentaris'}
+                                                    {translations.header.comment[language]}
                                                 </Link>
                                                 <button
                                                     onClick={handleLogout}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'Logout' : language === 'ES' ? 'Cerrar sesión' : 'Tancar sessió'}
+                                                    {translations.header.logout[language]}
                                                 </button>
                                             </>
                                         ) : (
@@ -244,7 +246,7 @@ export const Header = () => {
                                                     }}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'Login' : language === 'ES' ? 'Iniciar sesión' : 'Iniciar sessió'}
+                                                    {translations.header.login[language]}
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -253,7 +255,7 @@ export const Header = () => {
                                                     }}
                                                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                                                 >
-                                                    {language === 'EN' ? 'Register' : language === 'ES' ? 'Registrarse' : 'Registrar-se'}
+                                                    {translations.header.register[language]}
                                                 </button>
                                             </>
                                         )}

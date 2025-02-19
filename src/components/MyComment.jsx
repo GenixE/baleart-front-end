@@ -4,6 +4,8 @@ import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { translations } from '../translations/translations';
+
 
 const ImageModal = ({ imageUrl, onClose }) => {
     return (
@@ -108,9 +110,7 @@ export const MyComment = () => {
     if (!isLoggedIn) {
         return (
             <div className="text-center mt-8 text-gray-600">
-                {language === 'EN' ? 'Please log in to view your comments.' :
-                    language === 'ES' ? 'Por favor inicie sesión para ver sus comentarios.' :
-                        'Si us plau, inicieu sessió per veure els vostres comentaris.'}
+                {translations.myComment.notLoggedIn[language]}
             </div>
         );
     }
@@ -135,16 +135,12 @@ export const MyComment = () => {
 
             <div className="max-w-5xl w-full bg-white shadow-lg rounded-lg p-6">
                 <h1 className="text-3xl font-bold mb-6">
-                    {language === 'EN' ? 'My Comments' :
-                        language === 'ES' ? 'Mis Comentarios' :
-                            'Els Meus Comentaris'}
+                    {translations.myComment.myComments[language]}
                 </h1>
 
                 {comments.length === 0 ? (
                     <div className="text-gray-600 text-center py-8">
-                        {language === 'EN' ? 'No comments found.' :
-                            language === 'ES' ? 'No se encontraron comentarios.' :
-                                'No s\'han trobat comentaris.'}
+                        {translations.myComment.noComments[language]}
                     </div>
                 ) : (
                     <div className="space-y-6">

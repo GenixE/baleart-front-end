@@ -9,9 +9,9 @@ import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
 import { SearchProvider } from './contexts/FilterContext.jsx';
 import { Filter } from "./components/Filter.jsx";
-import { Space } from './components/Space';
+import Space from './components/space/Space.jsx';
 import { Navigate } from "react-router";
-import { AccountSettings } from "./components/AccountSettings.jsx";
+import { MyAccountSettings } from "./components/MyAccountSettings.jsx";
 import { LoginAndSecurity } from "./components/LoginAndSecurity.jsx";
 import { PersonalInfo } from "./components/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
@@ -55,7 +55,7 @@ function AppContent() {
                             path="/account-settings"
                             element={
                                 <PrivateRoute>
-                                    <AccountSettings />
+                                    <MyAccountSettings />
                                 </PrivateRoute>
                             }
                         />

@@ -5,6 +5,8 @@ import serviceIcons from '../assets/icons/ServiceIcons.jsx';
 import axios from 'axios';
 import { useSearch } from '../contexts/FilterContext.jsx';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { translations } from '../translations/translations';
+
 
 export const FilterModal = ({ isOpen, onClose }) => {
     const {
@@ -72,7 +74,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-xl max-h-6/7 overflow-y-auto">
                 <header className="flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-center flex-grow">{language === 'EN' ? 'Filters' : language === 'ES' ? 'Filtros' : 'Filtres'}</h2>
+                    <h2 className="text-2xl font-semibold text-center flex-grow">{translations.filter[language]}</h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                              stroke="currentColor" className="size-5">
@@ -81,7 +83,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     </button>
                 </header>
                 <div className="border-b pb-4">
-                    <h2 className="text-lg font-semibold mb-4 mt-4">{language === 'EN' ? 'Ratings' : language === 'ES' ? 'Valoración' : 'Valoració'}</h2>
+                    <h2 className="text-lg font-semibold mb-4 mt-4">{translations.filterModal.rating[language]}</h2>
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-gray-700">{ratingRange[0]}</span>
                         <Slider
@@ -101,7 +103,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <div className="border-b pb-4">
-                    <h2 className="text-lg font-semibold mb-4 mt-4">{language === 'EN' ? 'Art Forms' : language === 'ES' ? 'Modalidades' : 'Modalitats'}</h2>
+                    <h2 className="text-lg font-semibold mb-4 mt-4">{translations.filterModal.modality[language]}</h2>
                     <div className="justify gap-2 flex flex-wrap">
                         {modalities.map((modality) => (
                             <button
@@ -118,7 +120,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <div className="pb-4">
-                    <h2 className="text-lg font-semibold mb-4 mt-4">{language === 'EN' ? 'Amenities' : language === 'ES' ? 'Servicios' : 'Serveis'}</h2>
+                    <h2 className="text-lg font-semibold mb-4 mt-4">{translations.filterModal.service[language]}</h2>
                     <div className="justify gap-2 flex flex-wrap">
                         {services.map((service) => (
                             <button
@@ -138,7 +140,7 @@ export const FilterModal = ({ isOpen, onClose }) => {
                     onClick={onClose}
                     className="mt-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
                 >
-                    {language === 'EN' ? 'Close' : language === 'ES' ? 'Cerrar' : 'Tancar'}
+                    {translations.filterModal.close[language]}
                 </button>
             </div>
         </div>

@@ -1,13 +1,13 @@
-import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import styled from "styled-components";
-import {useLanguage} from "../contexts/LanguageContext.jsx";
+import styled from 'styled-components';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { translations } from '../translations/translations';
 
 export function PersonalInfo() {
     const navigate = useNavigate();
-
-    const {language} = useLanguage();
+    const { language } = useLanguage();
 
     const [userInfo, setUserInfo] = useState({
         name: '',
@@ -18,7 +18,6 @@ export function PersonalInfo() {
     const [editField, setEditField] = useState(null);
     const [error, setError] = useState(null);
 
-    // Fetch user information
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
@@ -37,7 +36,6 @@ export function PersonalInfo() {
                 });
 
                 const userData = response.data.data.user;
-                console.log('User Data:', userData);
                 setUserInfo({
                     name: userData.name || '',
                     lastName: userData.lastName || '',
@@ -60,7 +58,7 @@ export function PersonalInfo() {
     }, []);
 
     const handleInputChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setUserInfo({
             ...userInfo,
             [name]: value
@@ -96,12 +94,14 @@ export function PersonalInfo() {
     return (
         <div className="max-w-7xl min-w-[48rem] mx-auto p-8 space-y-8">
             <div className="flex items-center space-x-2 text-gray-600">
-                <button onClick={() => navigate('/account-settings')} className="hover:underline">{language === 'EN' ? 'Account' : language === 'ES' ? 'Mi cuenta' : 'El meu compte'}</button>
+                <button onClick={() => navigate('/account-settings')} className="hover:underline">
+                    {translations.accountSettings.account[language]}
+                </button>
                 <span>&gt;</span>
-                <span>{language === 'EN' ? 'Personal Info' : language === 'ES' ? 'Información personal' : 'Informació personal'}</span>
+                <span>{translations.personalInfo.title[language]}</span>
             </div>
 
-            <h1 className="text-3xl font-semibold mb-8">{language === 'EN' ? 'Personal Info' : language === 'ES' ? 'Información personal' : 'Informació personal'}</h1>
+            <h1 className="text-3xl font-semibold mb-8">{translations.personalInfo.title[language]}</h1>
 
             {error && <div className="text-red-500 mb-4">{error}</div>}
 
@@ -109,13 +109,15 @@ export function PersonalInfo() {
                 {/* Legal Name Section */}
                 <div className="border-b border-gray-200 pb-6">
                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">{language === 'EN' ? 'Legal Name' : language === 'ES' ? 'Nombre legal' : 'Nom legal'}</span>
+                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">
+                            {translations.personalInfo.legalName[language]}
+                        </span>
                         {editField !== 'name' ? (
                             <button
                                 onClick={() => setEditField('name')}
                                 className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                             >
-                                {language === 'EN' ? 'Edit' : 'Editar'}
+                                {translations.personalInfo.edit[language]}
                             </button>
                         ) : (
                             <div className="space-x-2">
@@ -123,13 +125,13 @@ export function PersonalInfo() {
                                     onClick={() => handleSubmit('name')}
                                     className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                                 >
-                                    {language === 'EN' ? 'Save' : 'Guardar'}
+                                    {translations.personalInfo.save[language]}
                                 </button>
                                 <button
                                     onClick={() => setEditField(null)}
                                     className="text-gray-600 text-sm font-semibold hover:text-gray-800"
                                 >
-                                    {language === 'EN' ? 'Cancel' : language === 'ES' ? 'Cancelar' : 'Cancel·lar'}
+                                    {translations.personalInfo.cancel[language]}
                                 </button>
                             </div>
                         )}
@@ -146,7 +148,7 @@ export function PersonalInfo() {
                                         className="input"
                                         required
                                     />
-                                    <span>{language === 'EN' ? 'First Name' : language === 'ES' ? 'Nombres' : 'Noms'}</span>
+                                    <span>{translations.personalInfo.firstName[language]}</span>
                                 </label>
                                 <label className="flex-1">
                                     <input
@@ -157,7 +159,7 @@ export function PersonalInfo() {
                                         className="input"
                                         required
                                     />
-                                    <span>{language === 'EN' ? 'Last Name' : language === 'ES' ? 'Apellidos' : 'Cognoms'}</span>
+                                    <span>{translations.personalInfo.lastName[language]}</span>
                                 </label>
                             </>
                         ) : (
@@ -171,13 +173,15 @@ export function PersonalInfo() {
                 {/* Email Section */}
                 <div className="border-b border-gray-200 pb-6">
                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">{language === 'EN' ? 'Email Address' : language === 'ES' ? 'Correo electrónico' : 'Correu electrònic'}</span>
+                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">
+                            {translations.personalInfo.emailAddress[language]}
+                        </span>
                         {editField !== 'email' ? (
                             <button
                                 onClick={() => setEditField('email')}
                                 className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                             >
-                                {language === 'EN' ? 'Edit' : 'Editar'}
+                                {translations.personalInfo.edit[language]}
                             </button>
                         ) : (
                             <div className="space-x-2">
@@ -185,13 +189,13 @@ export function PersonalInfo() {
                                     onClick={() => handleSubmit('email')}
                                     className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                                 >
-                                    {language === 'EN' ? 'Save' : 'Guardar'}
+                                    {translations.personalInfo.save[language]}
                                 </button>
                                 <button
                                     onClick={() => setEditField(null)}
                                     className="text-gray-600 text-sm font-semibold hover:text-gray-800"
                                 >
-                                    {language === 'EN' ? 'Cancel' : language === 'ES' ? 'Cancelar' : 'Cancel·lar'}
+                                    {translations.personalInfo.cancel[language]}
                                 </button>
                             </div>
                         )}
@@ -207,7 +211,7 @@ export function PersonalInfo() {
                                     className="input"
                                     required
                                 />
-                                <span>{language === 'EN' ? 'Email' : language === 'ES' ? 'Correo' : 'Correu'}</span>
+                                <span>{translations.personalInfo.email[language]}</span>
                             </label>
                         ) : (
                             <div className="flex-1">
@@ -220,13 +224,15 @@ export function PersonalInfo() {
                 {/* Phone Section */}
                 <div className="border-b border-gray-200 pb-6">
                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">{language === 'EN' ? 'Phone Number' : language === 'ES' ? 'Número de contacto' : 'Nombre de contacte'}</span>
+                        <span className="text-lg font-semibold text-gray-800 min-w-[200px]">
+                            {translations.personalInfo.phoneNumber[language]}
+                        </span>
                         {editField !== 'phone' ? (
                             <button
                                 onClick={() => setEditField('phone')}
                                 className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                             >
-                                {language === 'EN' ? 'Edit' : 'Editar'}
+                                {translations.personalInfo.edit[language]}
                             </button>
                         ) : (
                             <div className="space-x-2">
@@ -234,13 +240,13 @@ export function PersonalInfo() {
                                     onClick={() => handleSubmit('phone')}
                                     className="text-[#149d80] text-sm font-semibold hover:text-[#0f7a63]"
                                 >
-                                    {language === 'EN' ? 'Save' : 'Guardar'}
+                                    {translations.personalInfo.save[language]}
                                 </button>
                                 <button
                                     onClick={() => setEditField(null)}
                                     className="text-gray-600 text-sm font-semibold hover:text-gray-800"
                                 >
-                                    {language === 'EN' ? 'Cancel' : language === 'ES' ? 'Cancelar' : 'Cancel·lar'}
+                                    {translations.personalInfo.cancel[language]}
                                 </button>
                             </div>
                         )}
@@ -256,7 +262,7 @@ export function PersonalInfo() {
                                     className="input"
                                     required
                                 />
-                                <span>{language === 'EN' ? 'Phone Number' : language === 'ES' ? 'Número de contacto' : 'Nombre de contacte'}</span>
+                                <span>{translations.personalInfo.phoneNumber[language]}</span>
                             </label>
                         ) : (
                             <div className="flex-1">
