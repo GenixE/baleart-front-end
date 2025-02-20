@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import {useEffect, useState} from 'react';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Autoplay, Navigation, Pagination} from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -79,8 +79,11 @@ const BestRatedCarousel = () => {
         <div className="my-8 w-full px-4">
             <Swiper
                 modules={[Navigation, Pagination, Autoplay]}
-                navigation={{ nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }}
-                pagination={{ clickable: true }}
+                navigation={{nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev'}}
+                pagination={{
+                    clickable: true,
+                    dynamicBullets: true,
+                }}
                 spaceBetween={20}
                 slidesPerView={1}
                 loop={true}
