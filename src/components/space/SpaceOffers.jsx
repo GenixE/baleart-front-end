@@ -9,7 +9,7 @@ const SpaceOffers = ({space, language, getTranslatedName, translations}) => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.modalities}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.modalities[language]}</h3>
                     <ul className="list-none text-gray-700">
                         {space.modalities?.map((modality) => (
                             <li key={modality.id} className="flex items-center mb-2">
@@ -24,7 +24,7 @@ const SpaceOffers = ({space, language, getTranslatedName, translations}) => {
                     </ul>
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.amenities}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.amenities[language]}</h3>
                     <ul className="list-none text-gray-700">
                         {space.services?.map((service) => (
                             <li key={service.id} className="flex items-center mb-2">

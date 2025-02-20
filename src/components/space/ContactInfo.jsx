@@ -1,7 +1,7 @@
 const ContactInfo = ({space, language, apiKey, translations}) => {
     return (
         <div className="mb-4">
-            <h2 className="text-2xl font-semibold mb-4">{translations.contactInfo.title}</h2>
+            <h2 className="text-2xl font-semibold mb-4">{translations.contactInfo.title[language]}</h2>
             <div className="space-y-4">
                 {space.email && (
                     <div className="flex items-center">
@@ -74,7 +74,7 @@ const ContactInfo = ({space, language, apiKey, translations}) => {
 
             {space.address?.name && (
                 <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-4">{translations.contactInfo.location}</h3>
+                    <h3 className="text-xl font-semibold mb-4">{translations.contactInfo.location[language]}</h3>
                     <div className="w-full h-64 rounded-lg overflow-hidden shadow-lg">
                         <iframe
                             title="Google Maps Embed"
@@ -100,7 +100,7 @@ const ContactInfo = ({space, language, apiKey, translations}) => {
                             rel="noopener noreferrer"
                             className="bg-[#149d80] text-white px-4 py-2 rounded-lg hover:bg-[#11866f] transition-colors"
                         >
-                            {translations.contactInfo.directions}
+                            {translations.contactInfo.directions[language]}
                         </a>
                     </div>
                 </div>
