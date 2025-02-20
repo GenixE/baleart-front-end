@@ -11,13 +11,13 @@ import {SearchProvider} from './contexts/FilterContext.jsx';
 import {Filter} from "./components/Filter.jsx";
 import Space from './components/space/Space.jsx';
 import {Navigate} from "react-router";
-import {MyAccountSettings} from "./components/MyAccountSettings.jsx";
-import {LoginAndSecurity} from "./components/LoginAndSecurity.jsx";
-import {PersonalInfo} from "./components/PersonalInfo.jsx";
+import {MyAccountSettings} from "./components/settings/MyAccountSettings.jsx";
+import {LoginAndSecurity} from "./components/settings/LoginAndSecurity.jsx";
+import {PersonalInfo} from "./components/settings/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
 import {AuthProvider} from './contexts/AuthContext';
 import {LanguageProvider} from "./contexts/LanguageContext.jsx";
-import {MyComment} from "./components/MyComment.jsx"; // Import the AuthProvider
+import {MyComment} from "./components/settings/MyComment.jsx"; // Import the AuthProvider
 
 function App() {
     return (

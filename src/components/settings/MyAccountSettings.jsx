@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from "../contexts/LanguageContext.jsx";
-import { NavigationCard } from './NavigationCard';
+import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import { NavigationCard } from './NavigationCard.jsx';
 import { PersonalInfoIcon, SecurityIcon } from './MyAccountIcons.jsx';
-import { translations } from '../translations/translations';
+import { translations } from '../../translations/translations.js';
 
 export function MyAccountSettings() {
     const navigate = useNavigate();

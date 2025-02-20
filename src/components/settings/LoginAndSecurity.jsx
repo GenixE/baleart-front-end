@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
-import { translations } from '../translations/translations';
+import { useLanguage } from '../../contexts/LanguageContext.jsx';
+import { translations } from '../../translations/translations.js';
 
 export function LoginAndSecurity() {
     const navigate = useNavigate();
@@ -77,7 +77,7 @@ export function LoginAndSecurity() {
             localStorage.removeItem('email');
             navigate('/login');
         } catch (err) {
-            setError('Failed to delete account');
+            setError('Failed to delete settings');
             console.error(err);
         }
     };

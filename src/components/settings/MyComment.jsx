@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
-import { translations } from '../translations/translations';
+import { useLanguage } from '../../contexts/LanguageContext.jsx';
+import { translations } from '../../translations/translations.js';
 
 
 const ImageModal = ({ imageUrl, onClose }) => {

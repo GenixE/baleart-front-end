@@ -55,7 +55,7 @@ export const Filter = () => {
 
     return (
         <div className="bg-white shadow-sm my-1">
-            <div className="mx-20 p-4 flex items-center gap-4">
+            <div className="mx-20 flex items-center gap-4">
                 <div className="w-[calc(100%-120px)]">
                     {loading ? (
                         <div className="flex justify-center items-center h-20">
