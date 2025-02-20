@@ -1,6 +1,6 @@
 import Comment from './Comment';
 
-const CommentsSection = ({comments, currentPage, commentsPerPage, language, openModal, paginate}) => {
+const CommentsSection = ({comments, currentPage, commentsPerPage, language, openModal, paginate, translations}) => {
     const indexOfLastComment = currentPage * commentsPerPage;
     const indexOfFirstComment = indexOfLastComment - commentsPerPage;
     const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
@@ -8,7 +8,7 @@ const CommentsSection = ({comments, currentPage, commentsPerPage, language, open
     return (
         <div className="mt-8">
             <h2 className="text-2xl font-semibold mb-6">
-                {language === 'EN' ? 'Comments' : language === 'ES' ? 'Comentarios' : 'Comentaris'}
+                {translations.commentsSection.comments[language]}
             </h2>
             {currentComments.length > 0 ? (
                 <div className="space-y-6">
@@ -23,7 +23,7 @@ const CommentsSection = ({comments, currentPage, commentsPerPage, language, open
                 </div>
             ) : (
                 <p className="text-gray-600">
-                    {language === 'EN' ? 'No comments yet.' : language === 'ES' ? 'No hay comentarios aún.' : 'Encara no hi ha comentaris.'}
+                    {translations.commentsSection.noComments[language]}
                 </p>
             )}
 

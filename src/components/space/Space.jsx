@@ -9,6 +9,8 @@ import ContactInfo from './ContactInfo';
 import SpaceDetails from './SpaceDetails';
 import SpaceOffers from './SpaceOffers';
 import CommentsSection from './CommentsSection';
+import {translations} from '../../translations/translations';
+
 
 const Space = () => {
     const apiKey = import.meta.env.VITE_API_KEY;
@@ -249,9 +251,10 @@ const Space = () => {
                 <SpaceDetails space={space} language={language} getTranslatedDescription={getTranslatedDescription}
                               getTranslatedName={getTranslatedName}/>
                 <hr className="my-4 text-gray-300"/>
-                <SpaceOffers space={space} language={language} getTranslatedName={getTranslatedName}/>
+                <SpaceOffers space={space} language={language} getTranslatedName={getTranslatedName}
+                             translations={translations}/>
                 <hr className="my-4 text-gray-300"/>
-                <ContactInfo space={space} language={language} apiKey={apiKey}/>
+                <ContactInfo space={space} language={language} apiKey={apiKey} translations={translations}/>
                 <hr className="my-4 text-gray-300"/>
                 <CommentForm
                     isLoggedIn={isLoggedIn}
@@ -265,6 +268,7 @@ const Space = () => {
                     setSelectedImages={setSelectedImages}
                     submitting={submitting}
                     submitError={submitError}
+                    translations={translations}
                 />
                 <CommentsSection
                     comments={comments}
@@ -273,6 +277,7 @@ const Space = () => {
                     language={language}
                     openModal={openModal}
                     paginate={paginate}
+                    translations={translations}
                 />
             </div>
         </div>

@@ -1,7 +1,7 @@
 import {FiChevronLeft, FiChevronRight} from 'react-icons/fi';
 import {useState} from "react";
 
-const Comment = ({comment, language, openModal}) => {
+const Comment = ({comment, openModal}) => {
     const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
     const images = comment.images || [];
     const imagesPerGroup = 4;

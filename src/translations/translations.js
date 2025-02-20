@@ -267,5 +267,83 @@ export const translations = {
             ES: 'Aún no has hecho ningún comentario.',
             CA: 'Encara no has fet cap comentari.'
         }
+    },
+    commentForm: {
+        loginToComment: {
+            EN: 'Please log in to leave a comment.',
+            ES: 'Por favor inicie sesión para comentar.',
+            CA: 'Si us plau, inicieu sessió per comentar.'
+        },
+        rating: {
+            EN: 'Rating',
+            ES: 'Valoración',
+            CA: 'Valoració'
+        },
+        comment: {
+            EN: 'Comment',
+            ES: 'Comentario',
+            CA: 'Comentari'
+        },
+        uploadImages: {
+            EN: 'Upload Images (optional)',
+            ES: 'Subir imágenes (opcional)',
+            CA: 'Pujar imatges (opcional)'
+        },
+        submitting: {
+            EN: 'Submitting...',
+            ES: 'Enviando...',
+            CA: 'Enviant...'
+        },
+        submitComment: {
+            EN: 'Submit Comment',
+            ES: 'Enviar comentario',
+            CA: 'Enviar comentari'
+        }
+    },
+    commentsSection: {
+        comments: {
+            EN: 'Comments',
+            ES: 'Comentarios',
+            CA: 'Comentaris'
+        },
+        noComments: {
+            EN: 'No comments yet.',
+            ES: 'No hay comentarios aún.',
+            CA: 'Encara no hi ha comentaris.'
+        }
+    },
+    contactInfo: {
+        location: {
+            EN: 'Location',
+            ES: 'Ubicación',
+            CA: 'Ubicació'
+        },
+        title: {
+            EN: 'Contact Info',
+            ES: 'Información de contacto',
+            CA: 'Informació de contacte'
+        },
+        directions: {
+            EN: 'Get Directions',
+            ES: 'Obtener Direcciones',
+            CA: 'Obtenir Adreça'
+        }
+    },
+    spaceOffers: {
+        offer: {
+            EN: 'What this place offers',
+            ES: '¿Que ofrece este espacio?',
+            CA: 'Què ofereix aquest espai?'
+        },
+        modalities: {
+            EN: 'Art Forms',
+            ES: 'Modalidades',
+            CA: 'Modalitats'
+        },
+        amenities: {
+            EN: 'Amenities',
+            ES: 'Servicios',
+            CA: 'Serveis'
+        }
     }
 };

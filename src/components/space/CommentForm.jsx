@@ -11,16 +11,13 @@ const CommentForm = ({
                          selectedImages,
                          setSelectedImages,
                          submitting,
-                         submitError
+                         submitError,
+                         translations
                      }) => {
     if (!isLoggedIn) {
         return (
             <p className="text-gray-600">
-                {language === 'EN'
-                    ? 'Please log in to leave a comment.'
-                    : language === 'ES'
-                        ? 'Por favor inicie sesión para comentar.'
-                        : 'Si us plau, inicieu sessió per comentar.'}
+                {translations.commentForm.loginToComment[language]}
             </p>
         );
     }
@@ -31,14 +28,14 @@ const CommentForm = ({
 
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">
-                    {language === 'EN' ? 'Rating' : language === 'ES' ? 'Valoración' : 'Valoració'}
+                    {translations.commentForm.rating[language]}
                 </label>
                 <StarRating rating={rating} setRating={setRating}/>
             </div>
 
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">
-                    {language === 'EN' ? 'Comment' : language === 'ES' ? 'Comentario' : 'Comentari'}
+                    {translations.commentForm.rating[language]}
                 </label>
                 <textarea
                     value={commentText}
@@ -51,7 +48,7 @@ const CommentForm = ({
 
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">
-                    {language === 'EN' ? 'Upload Images (optional)' : language === 'ES' ? 'Subir imágenes (opcional)' : 'Pujar imatges (opcional)'}
+                    {translations.commentForm.uploadImages[language]}
                 </label>
                 <input
                     type="file"
@@ -68,8 +65,8 @@ const CommentForm = ({
                 className="bg-[#149d80] text-white px-6 py-2 rounded-lg hover:bg-[#11866f] disabled:bg-gray-400 transition-colors"
             >
                 {submitting ?
-                    (language === 'EN' ? 'Submitting...' : language === 'ES' ? 'Enviando...' : 'Enviant...') :
-                    (language === 'EN' ? 'Submit Comment' : language === 'ES' ? 'Enviar comentario' : 'Enviar comentari')}
+                    (translations.commentForm.submitting[language]) :
+                    (translations.commentForm.submitComment[language])}
             </button>
         </form>
     );

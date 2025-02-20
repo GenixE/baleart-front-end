@@ -1,15 +1,15 @@
 import ServiceIcons from "../../assets/icons/ServiceIcons.jsx";
 import ModalityIcons from "../../assets/icons/ModalityIcons.jsx";
 
-const SpaceOffers = ({space, language, getTranslatedName}) => {
+const SpaceOffers = ({space, language, getTranslatedName, translations}) => {
     return (
         <div className="mb-4">
             <h2 className="text-2xl font-semibold mb-4">
-                {language === 'EN' ? 'What this place offers' : language === 'ES' ? '¿Que ofrece este espacio?' : 'Què ofereix aquest espai?'}
+                {translations.spaceOffers.offer[language]}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <h3 className="text-xl font-semibold mb-2">{language === 'EN' ? 'Art Forms' : language === 'ES' ? 'Modalidades' : 'Modalitats'}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.modalities}</h3>
                     <ul className="list-none text-gray-700">
                         {space.modalities?.map((modality) => (
                             <li key={modality.id} className="flex items-center mb-2">
@@ -24,7 +24,7 @@ const SpaceOffers = ({space, language, getTranslatedName}) => {
                     </ul>
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold mb-2">{language === 'EN' ? 'Amenities' : language === 'ES' ? 'Servicios' : 'Serveis'}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{translations.spaceOffers.amenities}</h3>
                     <ul className="list-none text-gray-700">
                         {space.services?.map((service) => (
                             <li key={service.id} className="flex items-center mb-2">
