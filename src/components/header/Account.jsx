@@ -1,14 +1,14 @@
-import {useState, useRef, useEffect} from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { translations } from '../../translations/translations';
-import { useLanguage } from '../../contexts/LanguageContext.jsx';
+import {useEffect, useRef, useState} from 'react';
+import {Link} from 'react-router-dom';
+import {useAuth} from '../../contexts/AuthContext';
+import {translations} from '../../translations/translations';
+import {useLanguage} from '../../contexts/LanguageContext.jsx';
 
-export const Account = () => {
+export const Account = ({setIsAuthModalOpen, setAuthModalType}) => {
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const userDropdownRef = useRef(null);
-    const { isLoggedIn, logout } = useAuth();
-    const { language } = useLanguage();
+    const {isLoggedIn, logout} = useAuth();
+    const {language} = useLanguage();
 
     const toggleUserDropdown = () => {
         setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -86,13 +86,19 @@ export const Account = () => {
                     ) : (
                         <>
                             <button
-                                onClick={() => setIsAuthModalOpen(true)}
+                                onClick={() => {
+                                    setAuthModalType('login');
+                                    setIsAuthModalOpen(true);
+                                }}
                                 className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                             >
                                 {translations.header.login[language]}
                             </button>
                             <button
-                                onClick={() => setIsAuthModalOpen(true)}
+                                onClick={() => {
+                                    setAuthModalType('register');
+                                    setIsAuthModalOpen(true);
+                                }}
                                 className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                             >
                                 {translations.header.register[language]}
