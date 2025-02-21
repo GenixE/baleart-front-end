@@ -180,13 +180,13 @@ export const translations = {
     filterModal: {
         rating: {
             EN: 'Ratings',
-            ES: 'valoración',
-            CA: 'valoració'
+            ES: 'Valoración',
+            CA: 'Valoració'
         },
         modality: {
             EN: 'Art Forms',
-            ES: 'Modalidad',
-            CA: 'Modalitat'
+            ES: 'Modalidades',
+            CA: 'Modalitats'
         },
         service: {
             EN: 'Amenities',
@@ -386,6 +386,38 @@ export const translations = {
             EN: 'Subject',
             ES: 'Asunto',
             CA: 'Assumpte',
+        }
+    },
+    emailResponse: {
+        subject: {
+            EN: 'Thank you for contacting Baleart',
+            ES: 'Gracias por contactar con Baleart',
+            CA: 'Gràcies per contactar amb Baleart'
+        },
+        greeting: {
+            EN: 'Dear',
+            ES: 'Estimado/a',
+            CA: 'Estimat/da'
+        },
+        thankYouMessage: {
+            EN: 'Thank you for reaching out to us. We have received your message and will get back to you as soon as possible.',
+            ES: 'Gracias por contactar con nosotros. Hemos recibido su mensaje y le responderemos lo antes posible.',
+            CA: 'Gràcies per contactar amb nosaltres. Hem rebut el seu missatge i li respondrem tan aviat com sigui possible.'
+        },
+        yourMessageLabel: {
+            EN: 'Your Message',
+            ES: 'Su mensaje',
+            CA: 'El seu missatge'
+        },
+        bestRegards: {
+            EN: 'Best regards, Baleart Team',
+            ES: 'Saludos cordiales, Equipo de Baleart',
+            CA: 'Salutacions cordials, Equip de Baleart'
+        },
+        footerMessage: {
+            EN: 'This is an automated response. Please do not reply to this email.',
+            ES: 'Este es un mensaje automático. Por favor, no responda a este correo.',
+            CA: 'Aquest és un missatge automàtic. Si us plau, no respongui a aquest correu.'
         }
     }
 };

@@ -17,36 +17,6 @@ const ContactForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false); // New state to track submission status
     const navigate = useNavigate(); // Initialize useNavigate
 
-    const getEmailTranslations = (lang) => {
-        const translations = {
-            EN: {
-                subject: 'Thank you for contacting Baleart',
-                greeting: `Dear ${firstName} ${lastName}`,
-                thankYouMessage: 'Thank you for reaching out to us. We have received your message and will get back to you as soon as possible.',
-                yourMessageLabel: 'Your Message',
-                bestRegards: 'Best regards, Baleart Team',
-                footerMessage: 'This is an automated response. Please do not reply to this email.'
-            },
-            ES: {
-                subject: 'Gracias por contactar con Baleart',
-                greeting: `Estimado/a ${firstName} ${lastName}`,
-                thankYouMessage: 'Gracias por contactar con nosotros. Hemos recibido su mensaje y le responderemos lo antes posible.',
-                yourMessageLabel: 'Su mensaje',
-                bestRegards: 'Saludos cordiales, Equipo de Baleart',
-                footerMessage: 'Este es un mensaje automático. Por favor, no responda a este correo.'
-            },
-            CA: {
-                subject: 'Gràcies per contactar amb Baleart',
-                greeting: `Estimat/da ${firstName} ${lastName}`,
-                thankYouMessage: 'Gràcies per contactar amb nosaltres. Hem rebut el seu missatge i li respondrem tan aviat com sigui possible.',
-                yourMessageLabel: 'El seu missatge',
-                bestRegards: 'Salutacions cordials, Equip de Baleart',
-                footerMessage: 'Aquest és un missatge automàtic. Si us plau, no respongui a aquest correu.'
-            }
-        };
-        return translations[lang];
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -59,9 +29,6 @@ const ContactForm = () => {
         const AUTOREPLY_TEMPLATE_ID = 'template_4shu2y1'; // Template for the user
         const USER_ID = 'ldEv3ChqooxIHs22_';
 
-        const emailContent = getEmailTranslations(language);
-
-
         // Send email to your team
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target, USER_ID)
             .then((result) => {
@@ -71,13 +38,13 @@ const ContactForm = () => {
                     firstName,
                     lastName,
                     message,
-                    subject: emailContent.subject,
-                    greeting: emailContent.greeting,
-                    thankYouMessage: emailContent.thankYouMessage,
-                    yourMessageLabel: emailContent.yourMessageLabel,
-                    responseMessage: emailContent.responseMessage,
-                    footerMessage: emailContent.footerMessage,
-                    bestRegards: emailContent.bestRegards
+                    subject: translations.emailResponse.subject[language],
+                    greeting: translations.emailResponse.greeting[language],
+                    thankYouMessage: translations.emailResponse.thankYouMessage[language],
+                    yourMessageLabel: translations.emailResponse.yourMessageLabel[language],
+                    responseMessage: translations.emailResponse.responseMessage[language],
+                    footerMessage: translations.emailResponse.footerMessage[language],
+                    bestRegards: translations.emailResponse.bestRegards[language],
                 };
                 return emailjs.send(SERVICE_ID, AUTOREPLY_TEMPLATE_ID, autoreplyData, USER_ID);
             })
