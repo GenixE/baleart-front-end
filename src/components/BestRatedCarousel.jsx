@@ -71,9 +71,9 @@ const BestRatedCarousel = () => {
         window.open(`/space/${id}`, '_blank');
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <div className="my-8 w-full px-4">
