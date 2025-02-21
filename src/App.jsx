@@ -20,6 +20,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from "./contexts/LanguageContext.jsx";
 import { MyComment } from "./components/settings/MyComment.jsx";
 import BestRatedCarousel from './components/BestRatedCarousel';
+import ContactForm from "./components/ContactForm.jsx";
 
 function App() {
     return (
@@ -68,6 +69,7 @@ function AppContent() {
                     {location.pathname === '/' && !areFiltersApplied && <BestRatedCarousel />}
                     <div className="flex flex-row flex-wrap justify-center gap-4 mx-4">
                         <Routes>
+                            <Route path="/contact" element={<ContactForm />} />
                             <Route path="/" element={<ListSpace />} />
                             <Route path="/space/:id" element={<Space />} />
                             <Route path="*" element={<Navigate to="/" />} />

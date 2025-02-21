@@ -345,5 +345,47 @@ export const translations = {
             ES: 'Servicios',
             CA: 'Serveis'
         }
+    },
+    contactForm: {
+        title: {
+            EN: 'Contact Us',
+            ES: 'Contáctenos',
+            CA: 'Contacteu-nos',
+        },
+        description: {
+            EN: 'Send us your inquiries and we will get back to you as soon as possible.',
+            ES: 'Envíenos sus consultas y nos pondremos en contacto con usted lo antes posible.',
+            CA: 'Envieu-nos les vostres consultes i ens posarem en contacte amb vosaltres el més aviat possible.',
+        },
+        message: {
+            EN: 'Your Message',
+            ES: 'Tu Mensaje',
+            CA: 'El vostre missatge',
+        },
+        submit: {
+            EN: 'Submit',
+            ES: 'Enviar',
+            CA: 'Enviar',
+        },
+        success: {
+            EN: 'Thank you for contacting us!',
+            ES: '¡Gracias por contactarnos!',
+            CA: 'Gràcies per contactar-nos!',
+        },
+        error: {
+            EN: 'An error occurred. Please try again.',
+            ES: 'Ocurrió un error. Por favor, inténtelo de nuevo.',
+            CA: 'S\'ha produït un error. Si us plau, torna-ho a provar.',
+        },
+        submitting: {
+            EN: 'Submitting...',
+            ES: 'Enviando...',
+            CA: 'Enviant...',
+        },
+        subject: {
+            EN: 'Subject',
+            ES: 'Asunto',
+            CA: 'Assumpte',
+        }
     }
 };
