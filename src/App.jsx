@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Header } from "./components/Header.jsx";
+import { Header } from "./components/header/Header.jsx";
 import 'swiper/css/bundle';
 import './css/navbutton.css';
 import './css/pagination.css';
