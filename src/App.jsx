@@ -7,7 +7,7 @@ import './css/loading.css';
 import './css/modal.css';
 import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
-import { SearchProvider, useSearch } from './contexts/FilterContext.jsx'; // Import useSearch
+import { SearchProvider, useSearch } from './contexts/FilterContext.jsx';
 import { Filter } from "./components/Filter.jsx";
 import Space from './components/space/Space.jsx';
 import { Navigate } from "react-router";
@@ -20,6 +20,7 @@ import { LanguageProvider } from "./contexts/LanguageContext.jsx";
 import { MyComment } from "./components/accountSettings/MyComment.jsx";
 import BestRatedCarousel from './components/BestRatedCarousel';
 import ContactForm from "./components/ContactForm.jsx";
+import { DataProvider } from './contexts/DataContext'; // Import DataProvider
 
 function App() {
     return (
@@ -27,7 +28,9 @@ function App() {
             <AuthProvider>
                 <Router>
                     <SearchProvider>
-                        <AppContent />
+                        <DataProvider> {/* Wrap with DataProvider */}
+                            <AppContent />
+                        </DataProvider>
                     </SearchProvider>
                 </Router>
             </AuthProvider>
@@ -44,9 +47,8 @@ function AppContent() {
         selectedModalities,
         selectedServices,
         ratingRange,
-    } = useSearch(); // Use the useSearch hook to access filter states
+    } = useSearch();
 
-    // Check if any filters are applied
     const areFiltersApplied =
         searchQuery.trim() !== '' ||
         selectedIsland !== 'all' ||
@@ -64,7 +66,6 @@ function AppContent() {
             </div>
             <div className="mx-20 my-2">
                 <div className="flex flex-col items-center">
-                    {/* Show BestRatedCarousel only on the home page and if no filters are applied */}
                     {location.pathname === '/' && !areFiltersApplied && <BestRatedCarousel />}
                     <div className="flex flex-row flex-wrap justify-center gap-4 mx-4">
                         <Routes>

@@ -1,28 +1,27 @@
-import {useEffect, useState} from 'react';
-import {Swiper, SwiperSlide} from 'swiper/react';
-import {Autoplay, Navigation, Pagination} from 'swiper/modules';
+import { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
+import { useData } from '../contexts/DataContext'; // Import useData
 
 const BestRatedCarousel = () => {
     const [bestRatedSpaces, setBestRatedSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { spaceTypes } = useData(); // Use spaceTypes from context
 
     useEffect(() => {
         const fetchBestRatedSpaces = async () => {
             try {
-                // Fetch spaces data
                 const spacesResponse = await fetch('http://localhost:8000/api/spaces');
                 const spacesData = await spacesResponse.json();
                 const spaces = spacesData.data;
 
-                // Fetch images from spaces.json
                 const jsonResponse = await fetch('./spaces.json');
                 const jsonImages = await jsonResponse.json();
 
-                // Merge spaces data with images
                 const mergedData = spaces.map((space) => {
                     const matchingImages = jsonImages.filter(
                         (img) => img.registre === space.reg_number
@@ -30,13 +29,11 @@ const BestRatedCarousel = () => {
 
                     const imageUrls = matchingImages.map((entry) => entry.image);
 
-                    // Calculate rating
                     let rating = 0;
                     if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
                         rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
                     }
 
-                    // Combine location details
                     const zoneName = space.address?.zone?.name || '';
                     const municipalityName = space.address?.municipality?.name || '';
                     const location = `${zoneName} - ${municipalityName}`;
@@ -50,10 +47,7 @@ const BestRatedCarousel = () => {
                     };
                 });
 
-                // Filter best-rated spaces (rating >= 4)
                 const bestRatedSpaces = mergedData.filter((space) => space.rating >= 4);
-
-                // Sort by rating in descending order and take top 5
                 const top5Spaces = bestRatedSpaces.sort((a, b) => b.rating - a.rating).slice(0, 5);
                 setBestRatedSpaces(top5Spaces);
             } catch (error) {
@@ -66,20 +60,15 @@ const BestRatedCarousel = () => {
         fetchBestRatedSpaces();
     }, []);
 
-    // Handle click on a slide
     const handleCardClick = (id) => {
         window.open(`/space/${id}`, '_blank');
     };
-
-    // if (loading) {
-    //     return <div>Loading...</div>;
-    // }
 
     return (
         <div className="my-8 w-full px-4">
             <Swiper
                 modules={[Navigation, Pagination, Autoplay]}
-                navigation={{nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev'}}
+                navigation={{ nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }}
                 pagination={{
                     clickable: true,
                     dynamicBullets: true,
@@ -113,15 +102,14 @@ const BestRatedCarousel = () => {
 
                 {bestRatedSpaces.map((space) => (
                     <SwiperSlide key={space.id}>
-                        {/* Clickable container */}
                         <div
                             className="flex justify-center cursor-pointer"
-                            onClick={() => handleCardClick(space.id)} // Handle click
+                            onClick={() => handleCardClick(space.id)}
                         >
                             <div className="w-full h-132 overflow-hidden rounded-lg shadow-lg relative">
                                 {space.images.length > 0 ? (
                                     <img
-                                        src={space.images[0]} // Use the first image
+                                        src={space.images[0]}
                                         alt={`Best Rated Space ${space.id}`}
                                         className="w-full h-full object-cover"
                                     />
@@ -131,7 +119,6 @@ const BestRatedCarousel = () => {
                                     </div>
                                 )}
 
-                                {/* Overlay for space details */}
                                 <div className="absolute bottom-0 left-0 right-0 bg-black/40 p-4 text-white">
                                     <h3 className="text-xl font-semibold">{space.title}</h3>
                                     <p className="text-sm">{space.location}</p>
