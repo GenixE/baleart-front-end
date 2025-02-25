@@ -23,10 +23,9 @@ const ContactForm = () => {
         // Disable the submit button to prevent spamming
         setIsSubmitting(true);
 
-        // Replace these with your EmailJS credentials
         const SERVICE_ID = 'service_de7zaoc';
-        const TEMPLATE_ID = 'template_p67pv5n'; // Template for your team
-        const AUTOREPLY_TEMPLATE_ID = 'template_4shu2y1'; // Template for the user
+        const TEMPLATE_ID = 'template_p67pv5n';
+        const AUTOREPLY_TEMPLATE_ID = 'template_4shu2y1';
         const USER_ID = 'ldEv3ChqooxIHs22_';
 
         // Send email to your team
