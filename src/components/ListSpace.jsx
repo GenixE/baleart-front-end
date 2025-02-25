@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearch } from '../contexts/FilterContext.jsx';
+import { useData } from '../contexts/DataContext';
 import Card from './Card';
 
 function ListSpace() {
@@ -12,8 +13,8 @@ function ListSpace() {
         ratingRange,
     } = useSearch();
 
-    const [spaces, setSpaces] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { spaces, loading } = useData();
+    const [filteredSpaces, setFilteredSpaces] = useState([]);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const sentinelRef = useRef(null);
@@ -52,17 +53,13 @@ function ListSpace() {
     };
 
     useEffect(() => {
-        const fetchSpaces = async () => {
-            setLoading(true);
-            try {
-                let data;
+        const filterSpaces = async () => {
+            if (!loading && spaces.length > 0) {
+                let data = spaces;
 
-                const spacesUrl = selectedIsland === 'all'
-                    ? 'http://localhost:8000/api/spaces'
-                    : `http://localhost:8000/api/spaces?island_id=${selectedIsland}`;
-                const spacesResponse = await fetch(spacesUrl);
-                const spacesResult = await spacesResponse.json();
-                data = spacesResult.data;
+                if (selectedIsland !== 'all') {
+                    data = data.filter(space => space.address?.island?.id === selectedIsland);
+                }
 
                 if (selectedSpaceTypes.length > 0) {
                     data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
@@ -84,67 +81,66 @@ function ListSpace() {
                 });
 
                 if (searchQuery.trim()) {
-                    const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
-                    const searchResults = await searchResponse.json();
+                    try {
+                        const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
+                        const searchResults = await searchResponse.json();
 
-                    data = data.filter(spaceFromIsland =>
-                        searchResults.some(searchSpace => searchSpace.id === spaceFromIsland.id)
-                    );
+                        data = data.filter(spaceFromIsland =>
+                            searchResults.some(searchSpace => searchSpace.id === spaceFromIsland.id)
+                        );
+                    } catch (error) {
+                        console.error('Error fetching search results:', error);
+                    }
                 }
 
-                const jsonResponse = await fetch('./spaces.json');
-                const jsonImages = await jsonResponse.json();
+                try {
+                    const jsonResponse = await fetch('./spaces.json');
+                    const jsonImages = await jsonResponse.json();
 
-                const mergedData = data.map((space) => {
-                    const matchingImages = jsonImages.filter(
-                        (img) => img.registre === space.reg_number
-                    );
+                    const mergedData = data.map((space) => {
+                        const matchingImages = jsonImages.filter(
+                            (img) => img.registre === space.reg_number
+                        );
 
-                    const imageUrls = matchingImages.map((entry) => entry.image);
+                        const imageUrls = matchingImages.map((entry) => entry.image);
 
-                    let rating = 0;
-                    if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
-                        rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
-                    }
+                        let rating = 0;
+                        if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
+                            rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
+                        }
 
-                    const zoneName = space.address?.zone?.name || '';
-                    const municipalityName = space.address?.municipality?.name || '';
-                    const combinedDescription = `${zoneName} - ${municipalityName}`;
+                        const zoneName = space.address?.zone?.name || '';
+                        const municipalityName = space.address?.municipality?.name || '';
+                        const combinedDescription = `${zoneName} - ${municipalityName}`;
 
-                    return {
-                        id: space.id,
-                        images: imageUrls,
-                        title: space.name,
-                        description: combinedDescription,
-                        rating: rating,
-                    };
-                });
+                        return {
+                            id: space.id,
+                            images: imageUrls,
+                            title: space.name,
+                            description: combinedDescription,
+                            rating: rating,
+                        };
+                    });
 
-                const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
-                const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
-                const noRatingSpaces = mergedData.filter(space => space.rating === 0);
+                    const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
+                    const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
+                    const noRatingSpaces = mergedData.filter(space => space.rating === 0);
 
-                const shuffledBestRated = shuffleArray(bestRatedSpaces);
-                const shuffledRatedBelow4 = shuffleArray(ratedBelow4Spaces);
-                const shuffledNoRating = shuffleArray(noRatingSpaces);
+                    const shuffledBestRated = shuffleArray(bestRatedSpaces);
+                    const shuffledRatedBelow4 = shuffleArray(ratedBelow4Spaces);
+                    const shuffledNoRating = shuffleArray(noRatingSpaces);
 
-                const finalData = [...shuffledBestRated, ...shuffledRatedBelow4, ...shuffledNoRating];
+                    const finalData = [...shuffledBestRated, ...shuffledRatedBelow4, ...shuffledNoRating];
 
-                console.log('Final merged data:', finalData);
-                setSpaces(finalData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                setLoading(false);
+                    setFilteredSpaces(finalData);
+                } catch (error) {
+                    console.error('Error fetching JSON images:', error);
+                }
             }
         };
 
-        const timeoutId = setTimeout(() => {
-            fetchSpaces();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
+        filterSpaces();
+    }, [loading, spaces, searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
 
     const loadMore = () => {
         setIsLoadingMore(true);
@@ -158,7 +154,7 @@ function ListSpace() {
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && visibleCount < spaces.length) {
+                if (entries[0].isIntersecting && visibleCount < filteredSpaces.length) {
                     loadMore();
                 }
             },
@@ -174,7 +170,7 @@ function ListSpace() {
                 observer.unobserve(sentinelRef.current);
             }
         };
-    }, [visibleCount, spaces.length]);
+    }, [visibleCount, filteredSpaces.length]);
 
     if (loading) {
         return (
@@ -204,7 +200,7 @@ function ListSpace() {
                     <span></span>
                 </div>
             )}
-            {!loading && spaces.length === 0 && (
+            {!loading && filteredSpaces.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -229,11 +225,11 @@ function ListSpace() {
                 </div>
             )}
 
-            {!loading && spaces.length > 0 && (
+            {!loading && filteredSpaces.length > 0 && (
                 <>
                     <div
                         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
-                        {spaces.slice(0, visibleCount).map((item) => (
+                        {filteredSpaces.slice(0, visibleCount).map((item) => (
                             <div key={item.id} onClick={() => handleCardClick(item.id)}>
                                 <Card
                                     images={item.images}
@@ -245,7 +241,7 @@ function ListSpace() {
                         ))}
                     </div>
 
-                    {spaces.length > visibleCount && (
+                    {filteredSpaces.length > visibleCount && (
                         <div ref={sentinelRef} className="h-10"></div>
                     )}
 

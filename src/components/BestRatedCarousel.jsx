@@ -5,58 +5,55 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
+import { useData } from '../contexts/DataContext';
 
 const BestRatedCarousel = () => {
+    const { spaces, loading } = useData();
     const [bestRatedSpaces, setBestRatedSpaces] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBestRatedSpaces = async () => {
-            try {
-                const spacesResponse = await fetch('http://localhost:8000/api/spaces');
-                const spacesData = await spacesResponse.json();
-                const spaces = spacesData.data;
+        if (!loading && spaces.length > 0) {
+            const fetchJsonImages = async () => {
+                try {
+                    const jsonResponse = await fetch('./spaces.json');
+                    const jsonImages = await jsonResponse.json();
 
-                const jsonResponse = await fetch('./spaces.json');
-                const jsonImages = await jsonResponse.json();
+                    const mergedData = spaces.map((space) => {
+                        const matchingImages = jsonImages.filter(
+                            (img) => img.registre === space.reg_number
+                        );
 
-                const mergedData = spaces.map((space) => {
-                    const matchingImages = jsonImages.filter(
-                        (img) => img.registre === space.reg_number
-                    );
+                        const imageUrls = matchingImages.map((entry) => entry.image);
 
-                    const imageUrls = matchingImages.map((entry) => entry.image);
+                        let rating = 0;
+                        if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
+                            rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
+                        }
 
-                    let rating = 0;
-                    if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
-                        rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
-                    }
+                        const zoneName = space.address?.zone?.name || '';
+                        const municipalityName = space.address?.municipality?.name || '';
+                        const location = `${zoneName} - ${municipalityName}`;
 
-                    const zoneName = space.address?.zone?.name || '';
-                    const municipalityName = space.address?.municipality?.name || '';
-                    const location = `${zoneName} - ${municipalityName}`;
+                        return {
+                            id: space.id,
+                            images: imageUrls,
+                            title: space.name,
+                            location: location,
+                            rating: rating,
+                        };
+                    });
 
-                    return {
-                        id: space.id,
-                        images: imageUrls,
-                        title: space.name,
-                        location: location,
-                        rating: rating,
-                    };
-                });
+                    const bestRatedSpaces = mergedData.filter((space) => space.rating >= 4);
+                    const top5Spaces = bestRatedSpaces.sort((a, b) => b.rating - a.rating).slice(0, 5);
+                    setBestRatedSpaces(top5Spaces);
+                } catch (error) {
+                    console.error('Error fetching JSON images:', error);
+                }
+            };
 
-                const bestRatedSpaces = mergedData.filter((space) => space.rating >= 4);
-                const top5Spaces = bestRatedSpaces.sort((a, b) => b.rating - a.rating).slice(0, 5);
-                setBestRatedSpaces(top5Spaces);
-            } catch (error) {
-                console.error('Error fetching best-rated spaces:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBestRatedSpaces();
-    }, []);
+            fetchJsonImages();
+        }
+    }, [loading, spaces]);
 
     const handleCardClick = (id) => {
         window.open(`/space/${id}`, '_blank');
