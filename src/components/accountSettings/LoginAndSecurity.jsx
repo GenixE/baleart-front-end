@@ -77,7 +77,7 @@ export function LoginAndSecurity() {
             localStorage.removeItem('email');
             navigate('/login');
         } catch (err) {
-            setError('Failed to delete settings');
+            setError('Failed to delete accountSettings');
             console.error(err);
         }
     };

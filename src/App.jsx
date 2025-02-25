@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Header } from "./components/header/Header.jsx";
 import 'swiper/css/bundle';
@@ -12,13 +11,13 @@ import { SearchProvider, useSearch } from './contexts/FilterContext.jsx'; // Imp
 import { Filter } from "./components/Filter.jsx";
 import Space from './components/space/Space.jsx';
 import { Navigate } from "react-router";
-import { MyAccountSettings } from "./components/settings/MyAccountSettings.jsx";
-import { LoginAndSecurity } from "./components/settings/LoginAndSecurity.jsx";
-import { PersonalInfo } from "./components/settings/PersonalInfo.jsx";
+import { MyAccountSettings } from "./components/accountSettings/MyAccountSettings.jsx";
+import { LoginAndSecurity } from "./components/accountSettings/LoginAndSecurity.jsx";
+import { PersonalInfo } from "./components/accountSettings/PersonalInfo.jsx";
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from "./contexts/LanguageContext.jsx";
-import { MyComment } from "./components/settings/MyComment.jsx";
+import { MyComment } from "./components/accountSettings/MyComment.jsx";
 import BestRatedCarousel from './components/BestRatedCarousel';
 import ContactForm from "./components/ContactForm.jsx";
 
