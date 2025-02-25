@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearch } from '../contexts/FilterContext.jsx';
 import Card from './Card';
-import { useData } from '../contexts/DataContext'; // Import useData
 
 function ListSpace() {
     const {
@@ -13,7 +12,6 @@ function ListSpace() {
         ratingRange,
     } = useSearch();
 
-    const { spaceTypes, modalities, services } = useData(); // Use data from context
     const [spaces, setSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());

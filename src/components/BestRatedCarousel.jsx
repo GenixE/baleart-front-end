@@ -5,12 +5,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
-import { useData } from '../contexts/DataContext'; // Import useData
 
 const BestRatedCarousel = () => {
     const [bestRatedSpaces, setBestRatedSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { spaceTypes } = useData(); // Use spaceTypes from context
 
     useEffect(() => {
         const fetchBestRatedSpaces = async () => {

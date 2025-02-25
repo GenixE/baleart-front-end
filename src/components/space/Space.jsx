@@ -1,26 +1,26 @@
-import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {useLanguage} from '../../contexts/LanguageContext.jsx';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext.jsx';
 import axios from 'axios';
-import {useAuth} from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext'; // Import useData
 import ImageModal from './ImageModal';
 import CommentForm from './CommentForm';
 import ContactInfo from './ContactInfo';
 import SpaceDetails from './SpaceDetails';
 import SpaceOffers from './SpaceOffers';
 import CommentsSection from './CommentsSection';
-import {translations} from '../../translations/translations';
-
+import { translations } from '../../translations/translations';
 
 const Space = () => {
     const apiKey = import.meta.env.VITE_API_KEY;
-    const {id} = useParams();
+    const { id } = useParams();
     const [space, setSpace] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState('');
-    const {language} = useLanguage();
-    const {isLoggedIn} = useAuth();
+    const { language } = useLanguage();
+    const { isLoggedIn } = useAuth();
     const [rating, setRating] = useState(0);
     const [commentText, setCommentText] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
@@ -28,12 +28,12 @@ const Space = () => {
     const [submitError, setSubmitError] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [spaceTypes, setSpaceTypes] = useState([]);
-    const [modalities, setModalities] = useState([]);
-    const [services, setServices] = useState([]);
     const [comments, setComments] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const commentsPerPage = 5;
+
+    // Use the useData hook to get spaceTypes, modalities, and services
+    const { spaceTypes, modalities, services } = useData();
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
@@ -156,24 +156,7 @@ const Space = () => {
             }
         };
 
-        const fetchTranslations = async () => {
-            try {
-                const [spaceTypesRes, modalitiesRes, servicesRes] = await Promise.all([
-                    axios.get('http://localhost:8000/api/space-types'),
-                    axios.get('http://localhost:8000/api/modalities'),
-                    axios.get('http://localhost:8000/api/services')
-                ]);
-
-                setSpaceTypes(spaceTypesRes.data);
-                setModalities(modalitiesRes.data);
-                setServices(servicesRes.data);
-            } catch (error) {
-                console.error('Error fetching translations:', error);
-            }
-        };
-
         fetchSpaceDetails();
-        fetchTranslations();
     }, [id]);
 
     if (loading) {
@@ -202,7 +185,7 @@ const Space = () => {
     return (
         <div className="flex flex-col items-center w-full mt-4">
             {isModalOpen && (
-                <ImageModal imageUrl={selectedImage} onClose={() => setIsModalOpen(false)}/>
+                <ImageModal imageUrl={selectedImage} onClose={() => setIsModalOpen(false)} />
             )}
             <div className="max-w-5xl w-full bg-white shadow-lg rounded-lg p-6">
                 <div className="flex justify-between items-center mb-4">
@@ -243,19 +226,19 @@ const Space = () => {
                                 className="w-full h-96 object-cover rounded-lg shadow-xl transition-transform duration-300 group-hover:scale-105"
                                 onError={handleImageError}
                             />
-                            <div className="absolute inset-0 group-hover: transition-colors rounded-lg"/>
+                            <div className="absolute inset-0 group-hover: transition-colors rounded-lg" />
                         </div>
                     </div>
                 </div>
 
                 <SpaceDetails space={space} language={language} getTranslatedDescription={getTranslatedDescription}
-                              getTranslatedName={getTranslatedName}/>
-                <hr className="my-4 text-gray-300"/>
+                              getTranslatedName={getTranslatedName} />
+                <hr className="my-4 text-gray-300" />
                 <SpaceOffers space={space} language={language} getTranslatedName={getTranslatedName}
-                             translations={translations}/>
-                <hr className="my-4 text-gray-300"/>
-                <ContactInfo space={space} language={language} apiKey={apiKey} translations={translations}/>
-                <hr className="my-4 text-gray-300"/>
+                             translations={translations} />
+                <hr className="my-4 text-gray-300" />
+                <ContactInfo space={space} language={language} apiKey={apiKey} translations={translations} />
+                <hr className="my-4 text-gray-300" />
                 <CommentForm
                     isLoggedIn={isLoggedIn}
                     language={language}
