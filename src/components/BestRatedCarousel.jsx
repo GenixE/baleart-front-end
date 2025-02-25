@@ -10,6 +10,7 @@ import { useData } from '../contexts/DataContext';
 const BestRatedCarousel = () => {
     const { spaces, loading } = useData();
     const [bestRatedSpaces, setBestRatedSpaces] = useState([]);
+    const [isDataLoaded, setIsDataLoaded] = useState(false); // State to track if data is loaded
 
     useEffect(() => {
         if (!loading && spaces.length > 0) {
@@ -45,7 +46,10 @@ const BestRatedCarousel = () => {
 
                     const bestRatedSpaces = mergedData.filter((space) => space.rating >= 4);
                     const top5Spaces = bestRatedSpaces.sort((a, b) => b.rating - a.rating).slice(0, 5);
+
+                    // Set the best-rated spaces and mark data as loaded
                     setBestRatedSpaces(top5Spaces);
+                    setIsDataLoaded(true);
                 } catch (error) {
                     console.error('Error fetching JSON images:', error);
                 }
@@ -59,6 +63,11 @@ const BestRatedCarousel = () => {
         window.open(`/space/${id}`, '_blank');
     };
 
+    // Only render the Swiper if there are at least 2 slides (required for loop to work)
+    if (!isDataLoaded || bestRatedSpaces.length < 2) {
+        return null; // Don't render the carousel if data isn't ready or there aren't enough slides
+    }
+
     return (
         <div className="my-8 w-full px-4">
             <Swiper
@@ -70,7 +79,7 @@ const BestRatedCarousel = () => {
                 }}
                 spaceBetween={20}
                 slidesPerView={1}
-                loop={true}
+                loop={true} // Enable loop only if there are enough slides
                 autoplay={{
                     delay: 3000,
                     disableOnInteraction: false,

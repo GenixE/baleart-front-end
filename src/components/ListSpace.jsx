@@ -13,10 +13,11 @@ function ListSpace() {
         ratingRange,
     } = useSearch();
 
-    const { spaces, loading } = useData();
+    const { spaces: contextSpaces, loading: contextLoading } = useData(); // Use spaces and loading from DataContext
     const [filteredSpaces, setFilteredSpaces] = useState([]);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // Local loading state
     const sentinelRef = useRef(null);
 
     function getInitialVisibleCount() {
@@ -29,15 +30,10 @@ function ListSpace() {
 
     function getCardsToLoad() {
         const screenWidth = window.innerWidth;
-        if (screenWidth >= 1536) {
-            return 6;
-        } else if (screenWidth >= 1280) {
-            return 4;
-        } else if (screenWidth >= 768) {
-            return 3;
-        } else {
-            return 2;
-        }
+        if (screenWidth >= 1536) return 6;
+        if (screenWidth >= 1280) return 4;
+        if (screenWidth >= 768) return 3;
+        return 2;
     }
 
     const handleCardClick = (id) => {
@@ -53,26 +49,39 @@ function ListSpace() {
     };
 
     useEffect(() => {
-        const filterSpaces = async () => {
-            if (!loading && spaces.length > 0) {
-                let data = spaces;
+        const fetchSpaces = async () => {
+            setIsLoading(true); // Start loading
 
-                if (selectedIsland !== 'all') {
-                    data = data.filter(space => space.address?.island?.id === selectedIsland);
+            try {
+                let data;
+
+                // If selectedIsland is 'all', use spaces from DataContext
+                if (selectedIsland === 'all') {
+                    data = contextSpaces;
+                } else {
+                    // Fetch spaces for the selected island from the API
+                    const spacesUrl = `http://localhost:8000/api/spaces?island_id=${selectedIsland}`;
+                    const spacesResponse = await fetch(spacesUrl);
+                    const spacesResult = await spacesResponse.json();
+                    data = spacesResult.data;
                 }
 
+                // Apply space types filter
                 if (selectedSpaceTypes.length > 0) {
                     data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
                 }
 
+                // Apply modalities filter
                 if (selectedModalities.length > 0) {
                     data = data.filter(space => space.modalities && space.modalities.some(modality => selectedModalities.includes(modality.id)));
                 }
 
+                // Apply services filter
                 if (selectedServices.length > 0) {
                     data = data.filter(space => space.services && space.services.some(service => selectedServices.includes(service.id)));
                 }
 
+                // Apply rating filter
                 data = data.filter(space => {
                     const rating = space.totalScore && space.countScore && Number(space.countScore) !== 0
                         ? parseFloat(space.totalScore) / parseFloat(space.countScore)
@@ -80,6 +89,7 @@ function ListSpace() {
                     return rating >= ratingRange[0] && rating <= ratingRange[1];
                 });
 
+                // Apply search query filter
                 if (searchQuery.trim()) {
                     try {
                         const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
@@ -93,6 +103,7 @@ function ListSpace() {
                     }
                 }
 
+                // Merge with JSON images
                 try {
                     const jsonResponse = await fetch('./spaces.json');
                     const jsonImages = await jsonResponse.json();
@@ -122,6 +133,7 @@ function ListSpace() {
                         };
                     });
 
+                    // Sort and shuffle spaces
                     const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
                     const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
                     const noRatingSpaces = mergedData.filter(space => space.rating === 0);
@@ -136,11 +148,15 @@ function ListSpace() {
                 } catch (error) {
                     console.error('Error fetching JSON images:', error);
                 }
+            } catch (error) {
+                console.error('Error fetching spaces:', error);
+            } finally {
+                setIsLoading(false); // Stop loading
             }
         };
 
-        filterSpaces();
-    }, [loading, spaces, searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
+        fetchSpaces();
+    }, [contextSpaces, contextLoading, searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
 
     const loadMore = () => {
         setIsLoadingMore(true);
@@ -172,25 +188,9 @@ function ListSpace() {
         };
     }, [visibleCount, filteredSpaces.length]);
 
-    if (loading) {
+    if (isLoading) {
         return (
-            <div className="loader">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        );
-    }
-
-    return (
-        <div className="flex flex-col items-center w-full mt-4">
-            {loading && (
+            <div className="flex flex-col items-center justify-center h-screen">
                 <div className="loader">
                     <span></span>
                     <span></span>
@@ -199,8 +199,14 @@ function ListSpace() {
                     <span></span>
                     <span></span>
                 </div>
-            )}
-            {!loading && filteredSpaces.length === 0 && (
+                <p className="mt-4 text-gray-600">Loading spaces...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col items-center w-full mt-4">
+            {!isLoading && filteredSpaces.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -225,7 +231,7 @@ function ListSpace() {
                 </div>
             )}
 
-            {!loading && filteredSpaces.length > 0 && (
+            {!isLoading && filteredSpaces.length > 0 && (
                 <>
                     <div
                         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">

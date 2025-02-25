@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import {useState} from 'react';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Navigation, Pagination} from 'swiper/modules';
 import spaceTypeIcons from '../assets/icons/SpaceTypeIcons.jsx';
-import { FilterModal } from './FilterModal.jsx';
-import { useSearch } from '../contexts/FilterContext.jsx';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
-import { translations } from '../translations/translations';
-import { useData } from '../contexts/DataContext'; // Import useData
+import {FilterModal} from './FilterModal.jsx';
+import {useSearch} from '../contexts/FilterContext.jsx';
+import {useLanguage} from '../contexts/LanguageContext.jsx';
+import {translations} from '../translations/translations';
+import {useData} from '../contexts/DataContext';
 
 export const Filter = () => {
-    const { selectedSpaceTypes, setSelectedSpaceTypes } = useSearch();
-    const { spaceTypes, loading } = useData(); // Use spaceTypes from context
+    const {selectedSpaceTypes, setSelectedSpaceTypes} = useSearch();
+    const {spaceTypes, loading} = useData();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sliderValue, setSliderValue] = useState([0, 5]);
-    const { language } = useLanguage();
+    const {language} = useLanguage();
 
     const handleFilterClick = (type) => {
         setSelectedSpaceTypes(prevSelectedTypes => {
@@ -36,81 +36,83 @@ export const Filter = () => {
         document.body.classList.remove('overflow-hidden');
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-20">
+                <div className="loader">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white shadow-sm my-1">
             <div className="mx-20 flex items-center gap-4">
                 <div className="w-[calc(100%-120px)]">
-                    {loading ? (
-                        <div className="flex justify-center items-center h-20">
-                            <div className="loader">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
+                    <Swiper
+                        modules={[Navigation, Pagination]}
+                        breakpoints={{
+                            320: {slidesPerView: 3},
+                            480: {slidesPerView: 5},
+                            720: {slidesPerView: 8},
+                            1000: {slidesPerView: 12},
+                            2000: {slidesPerView: 15},
+                        }}
+                        navigation={{
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev'
+                        }}
+                        className="mySwiper"
+                    >
+                        <div className="swiper-button-prev">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                      d="M15.75 19.5 8.25 12l7.5-7.5"/>
+                            </svg>
                         </div>
-                    ) : (
-                        <Swiper
-                            modules={[Navigation, Pagination]}
-                            breakpoints={{
-                                320: { slidesPerView: 3 },
-                                480: { slidesPerView: 5 },
-                                720: { slidesPerView: 8 },
-                                1000: { slidesPerView: 12 },
-                                2000: { slidesPerView: 15 },
-                            }}
-                            navigation={{
-                                nextEl: '.swiper-button-next',
-                                prevEl: '.swiper-button-prev'
-                            }}
-                            className="mySwiper"
-                        >
-                            <div className="swiper-button-prev">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                          d="M15.75 19.5 8.25 12l7.5-7.5"/>
-                                </svg>
-                            </div>
-                            {spaceTypes.map((type) => (
-                                <SwiperSlide key={type.id}>
+                        {spaceTypes.map((type) => (
+                            <SwiperSlide key={type.id}>
+                                <div
+                                    className={`flex flex-col items-center space-y-1 mx-16 cursor-pointer transition-all duration-200 hover:opacity-75 
+                                        ${selectedSpaceTypes.includes(type.id) ? 'p-2 text-[#149d80]' : 'p-2'}`}
+                                    onClick={() => handleFilterClick(type)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            handleFilterClick(type);
+                                        }
+                                    }}
+                                >
                                     <div
-                                        className={`flex flex-col items-center space-y-1 mx-16 cursor-pointer transition-all duration-200 hover:opacity-75 
-                                            ${selectedSpaceTypes.includes(type.id) ? 'p-2 text-[#149d80]' : 'p-2'}`}
-                                        onClick={() => handleFilterClick(type)}
-                                        role="button"
-                                        tabIndex={0}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                handleFilterClick(type);
-                                            }
-                                        }}
-                                    >
-                                        <div
-                                            className={`transition-transform duration-200 hover:scale-110 ${selectedSpaceTypes.includes(type.id) ? 'text-[#149d80]' : ''}`}>
-                                            {spaceTypeIcons[type.id] || (
-                                                <svg viewBox="0 0 50 50" className="size-6">
-                                                    <path
-                                                        fill="currentColor"
-                                                        d="M25 5L5 15v2h40v-2L25 5zm-16 13h32v20H9zm-4 22h40v2H5z"
-                                                    />
-                                                </svg>
-                                            )}
-                                        </div>
-                                        <p className={`text-xs font-semibold text-center ${selectedSpaceTypes.includes(type.id) ? 'text-[#149d80]' : 'text-gray-700'}`}>
-                                            {type[`description_${language}`]}
-                                        </p>
+                                        className={`transition-transform duration-200 hover:scale-110 ${selectedSpaceTypes.includes(type.id) ? 'text-[#149d80]' : ''}`}>
+                                        {spaceTypeIcons[type.id] || (
+                                            <svg viewBox="0 0 50 50" className="size-6">
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M25 5L5 15v2h40v-2L25 5zm-16 13h32v20H9zm-4 22h40v2H5z"
+                                                />
+                                            </svg>
+                                        )}
                                     </div>
-                                </SwiperSlide>
-                            ))}
-                            <div className="swiper-button-next">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                          d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
-                                </svg>
-                            </div>
-                        </Swiper>
-                    )}
+                                    <p className={`text-xs font-semibold text-center ${selectedSpaceTypes.includes(type.id) ? 'text-[#149d80]' : 'text-gray-700'}`}>
+                                        {type[`description_${language}`]}
+                                    </p>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                        <div className="swiper-button-next">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                      d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                            </svg>
+                        </div>
+                    </Swiper>
                 </div>
                 <button
                     onClick={openModal}
