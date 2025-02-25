@@ -5,6 +5,7 @@ import './css/navbutton.css';
 import './css/pagination.css';
 import './css/loading.css';
 import './css/modal.css';
+import './css/tailwind.css';
 import 'rc-slider/assets/index.css';
 import ListSpace from "./components/ListSpace.jsx";
 import {SearchProvider, useSearch} from './contexts/FilterContext.jsx';
