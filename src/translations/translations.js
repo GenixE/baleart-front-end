@@ -162,14 +162,29 @@ export const translations = {
             CA: 'Error en restablir la contrasenya. Si us plau, verifica les teves entrades.'
         },
         passwordsDontMatch: {
-            EN: "Passwords don't match!",
-            ES: "¡Las contraseñas no coinciden!",
-            CA: "Les contrasenyes no coincideixen!"
+            EN: "The password field confirmation does not match.",
+            ES: "El campo de confirmación de contraseña no coincide.",
+            CA: "El camp de confirmació de contrasenya no coincideix."
         },
         signUpMessage: {
             EN: 'Sign up to get full access to our app.',
             ES: 'Regístrate para obtener acceso completo a nuestra aplicación.',
             CA: 'Registra\'t per obtenir accés complet a la nostra aplicació.'
+        },
+        emailTaken: {
+            EN: 'The email has already been taken.',
+            ES: 'El correo electrónico ya ha sido tomado.',
+            CA: 'El correu electrònic ja ha estat pres.'
+        },
+        mustBeAtLeast: {
+            EN: 'The password field must be at least 8 characters.',
+            ES: 'El campo de contraseña debe tener al menos 8 caracteres.',
+            CA: 'El camp de contrasenya ha de tenir com a mínim 8 caràcters.'
+        },
+        wrongCredentials: {
+            EN: 'The provided credentials are incorrect.',
+            ES: 'Las credenciales proporcionadas son incorrectas.',
+            CA: 'Les credencials proporcionades són incorrectes.'
         }
     },
     filter: {
