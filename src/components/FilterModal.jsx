@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Slider from 'rc-slider';
 import modalityIcons from '../assets/icons/ModalityIcons.jsx';
 import serviceIcons from '../assets/icons/ServiceIcons.jsx';
-import axios from 'axios';
 import { useSearch } from '../contexts/FilterContext.jsx';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { translations } from '../translations/translations';
-
+import { useData } from '../contexts/DataContext.jsx'; // Import the useData hook
 
 export const FilterModal = ({ isOpen, onClose }) => {
     const {
@@ -18,33 +17,8 @@ export const FilterModal = ({ isOpen, onClose }) => {
         setRatingRange,
     } = useSearch();
 
-    const [modalities, setModalities] = useState([]);
-    const [services, setServices] = useState([]);
+    const { modalities, services } = useData(); // Use the data from DataContext
     const { language } = useLanguage();
-
-    useEffect(() => {
-        const fetchModalities = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/modalities');
-                setModalities(response.data);
-            } catch (error) {
-                console.error('Error fetching modalities:', error);
-            }
-        };
-        fetchModalities();
-    }, []);
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/services');
-                setServices(response.data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            }
-        };
-        fetchServices();
-    }, []);
 
     const handleModalityClick = (modality) => {
         setSelectedModalities(prevSelected => {
