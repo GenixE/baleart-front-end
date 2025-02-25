@@ -13,19 +13,19 @@ function ListSpace() {
         ratingRange,
     } = useSearch();
 
-    const { spaces: contextSpaces, loading: contextLoading } = useData(); // Use spaces and loading from DataContext
+    const { spaces: contextSpaces, loading: contextLoading } = useData();
     const [filteredSpaces, setFilteredSpaces] = useState([]);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
     const [isLoadingMore, setIsLoadingMore] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // Local loading state
+    const [isLoading, setIsLoading] = useState(true);
     const sentinelRef = useRef(null);
 
     function getInitialVisibleCount() {
         const screenWidth = window.innerWidth;
-        if (screenWidth >= 1536) return 12;
-        if (screenWidth >= 1280) return 8;
-        if (screenWidth >= 768) return 6;
-        return 4;
+        if (screenWidth >= 1536) return 6;
+        if (screenWidth >= 1280) return 4;
+        if (screenWidth >= 768) return 3;
+        return 2;
     }
 
     function getCardsToLoad() {
@@ -50,38 +50,32 @@ function ListSpace() {
 
     useEffect(() => {
         const fetchSpaces = async () => {
-            setIsLoading(true); // Start loading
+            setIsLoading(true);
 
             try {
                 let data;
 
-                // If selectedIsland is 'all', use spaces from DataContext
                 if (selectedIsland === 'all') {
                     data = contextSpaces;
                 } else {
-                    // Fetch spaces for the selected island from the API
                     const spacesUrl = `http://localhost:8000/api/spaces?island_id=${selectedIsland}`;
                     const spacesResponse = await fetch(spacesUrl);
                     const spacesResult = await spacesResponse.json();
                     data = spacesResult.data;
                 }
 
-                // Apply space types filter
                 if (selectedSpaceTypes.length > 0) {
                     data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
                 }
 
-                // Apply modalities filter
                 if (selectedModalities.length > 0) {
                     data = data.filter(space => space.modalities && space.modalities.some(modality => selectedModalities.includes(modality.id)));
                 }
 
-                // Apply services filter
                 if (selectedServices.length > 0) {
                     data = data.filter(space => space.services && space.services.some(service => selectedServices.includes(service.id)));
                 }
 
-                // Apply rating filter
                 data = data.filter(space => {
                     const rating = space.totalScore && space.countScore && Number(space.countScore) !== 0
                         ? parseFloat(space.totalScore) / parseFloat(space.countScore)
@@ -89,7 +83,6 @@ function ListSpace() {
                     return rating >= ratingRange[0] && rating <= ratingRange[1];
                 });
 
-                // Apply search query filter
                 if (searchQuery.trim()) {
                     try {
                         const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
@@ -103,7 +96,6 @@ function ListSpace() {
                     }
                 }
 
-                // Merge with JSON images
                 try {
                     const jsonResponse = await fetch('./spaces.json');
                     const jsonImages = await jsonResponse.json();
@@ -133,7 +125,6 @@ function ListSpace() {
                         };
                     });
 
-                    // Sort and shuffle spaces
                     const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
                     const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
                     const noRatingSpaces = mergedData.filter(space => space.rating === 0);
@@ -151,7 +142,7 @@ function ListSpace() {
             } catch (error) {
                 console.error('Error fetching spaces:', error);
             } finally {
-                setIsLoading(false); // Stop loading
+                setIsLoading(false);
             }
         };
 
@@ -167,25 +158,41 @@ function ListSpace() {
         }, 1000);
     };
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && visibleCount < filteredSpaces.length) {
-                    loadMore();
-                }
-            },
-            { threshold: 1.0 }
-        );
-
-        if (sentinelRef.current) {
-            observer.observe(sentinelRef.current);
-        }
-
-        return () => {
-            if (sentinelRef.current) {
-                observer.unobserve(sentinelRef.current);
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return function (...args) {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
             }
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
         };
+    };
+
+    const debouncedLoadMore = debounce(loadMore, 300);
+
+    useEffect(() => {
+        if (filteredSpaces.length > 0) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    if (entries[0].isIntersecting && visibleCount < filteredSpaces.length) {
+                        debouncedLoadMore();
+                    }
+                },
+                { threshold: 0.1 }
+            );
+
+            if (sentinelRef.current) {
+                observer.observe(sentinelRef.current);
+            }
+
+            return () => {
+                if (sentinelRef.current) {
+                    observer.unobserve(sentinelRef.current);
+                }
+            };
+        }
     }, [visibleCount, filteredSpaces.length]);
 
     if (isLoading) {
@@ -233,8 +240,7 @@ function ListSpace() {
 
             {!isLoading && filteredSpaces.length > 0 && (
                 <>
-                    <div
-                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
                         {filteredSpaces.slice(0, visibleCount).map((item) => (
                             <div key={item.id} onClick={() => handleCardClick(item.id)}>
                                 <Card
