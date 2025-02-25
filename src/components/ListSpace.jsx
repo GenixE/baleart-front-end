@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearch } from '../contexts/FilterContext.jsx';
 import Card from './Card';
+import useSpacesData from '../hooks/useSpacesData';
 
 function ListSpace() {
     const {
@@ -12,8 +13,8 @@ function ListSpace() {
         ratingRange,
     } = useSearch();
 
-    const [spaces, setSpaces] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { spaces: allSpaces, loading } = useSpacesData();
+    const [filteredSpaces, setFilteredSpaces] = useState([]);
     const [visibleCount, setVisibleCount] = useState(getInitialVisibleCount());
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const sentinelRef = useRef(null);
@@ -26,25 +27,18 @@ function ListSpace() {
         return 4;
     }
 
-    // Function to get the number of cards to load based on screen size
     function getCardsToLoad() {
         const screenWidth = window.innerWidth;
-        if (screenWidth >= 1536) { // 2xl screens
-            return 6;
-        } else if (screenWidth >= 1280) { // xl screens
-            return 4;
-        } else if (screenWidth >= 768) { // md screens
-            return 3;
-        } else { // sm screens
-            return 2;
-        }
+        if (screenWidth >= 1536) return 6;
+        if (screenWidth >= 1280) return 4;
+        if (screenWidth >= 768) return 3;
+        return 2;
     }
 
     const handleCardClick = (id) => {
         window.open(`/space/${id}`, '_blank');
     };
 
-    // Function to shuffle an array randomly
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -53,148 +47,83 @@ function ListSpace() {
         return array;
     };
 
-    // Fetch spaces based on search query and island filter
     useEffect(() => {
-        const fetchSpaces = async () => {
-            setLoading(true);
-            try {
-                let data;
+        const filterSpaces = () => {
+            let data = [...allSpaces];
 
-                // Always fetch based on island filter first
-                const spacesUrl = selectedIsland === 'all'
-                    ? 'http://localhost:8000/api/spaces'
-                    : `http://localhost:8000/api/spaces?island_id=${selectedIsland}`;
-                const spacesResponse = await fetch(spacesUrl);
-                const spacesResult = await spacesResponse.json();
-                data = spacesResult.data;
-
-                // Apply space type filter if any types are selected
-                if (selectedSpaceTypes.length > 0) {
-                    data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
-                }
-
-                // Apply modality filter if any modalities are selected
-                if (selectedModalities.length > 0) {
-                    data = data.filter(space => space.modalities && space.modalities.some(modality => selectedModalities.includes(modality.id)));
-                }
-
-                // Apply service filter if any services are selected
-                if (selectedServices.length > 0) {
-                    data = data.filter(space => space.services && space.services.some(service => selectedServices.includes(service.id)));
-                }
-
-                // Apply rating filter
-                data = data.filter(space => {
-                    const rating = space.totalScore && space.countScore && Number(space.countScore) !== 0
-                        ? parseFloat(space.totalScore) / parseFloat(space.countScore)
-                        : 0;
-                    return rating >= ratingRange[0] && rating <= ratingRange[1];
-                });
-
-                // If there's a search query, filter the results
-                if (searchQuery.trim()) {
-                    const searchResponse = await fetch(`http://localhost:8000/api/search?search=${encodeURIComponent(searchQuery)}`);
-                    const searchResults = await searchResponse.json();
-
-                    data = data.filter(spaceFromIsland =>
-                        searchResults.some(searchSpace => searchSpace.id === spaceFromIsland.id)
-                    );
-                }
-
-                // Fetch images
-                const jsonResponse = await fetch('./spaces.json');
-                const jsonImages = await jsonResponse.json();
-
-                // Merge the data with images
-                const mergedData = data.map((space) => {
-                    const matchingImages = jsonImages.filter(
-                        (img) => img.registre === space.reg_number
-                    );
-
-                    const imageUrls = matchingImages.map((entry) => entry.image);
-
-                    let rating = 0;
-                    if (space.totalScore && space.countScore && Number(space.countScore) !== 0) {
-                        rating = parseFloat(space.totalScore) / parseFloat(space.countScore);
-                    }
-
-                    const zoneName = space.address?.zone?.name || '';
-                    const municipalityName = space.address?.municipality?.name || '';
-                    const combinedDescription = `${zoneName} - ${municipalityName}`;
-
-                    return {
-                        id: space.id,
-                        images: imageUrls,
-                        title: space.name,
-                        description: combinedDescription,
-                        rating: rating,
-                    };
-                });
-
-                // Separate spaces into three groups:
-                // 1. Best-rated spaces (rating >= 4)
-                // 2. Spaces with ratings below 4
-                // 3. Spaces with no ratings
-                const bestRatedSpaces = mergedData.filter(space => space.rating >= 4);
-                const ratedBelow4Spaces = mergedData.filter(space => space.rating > 0 && space.rating < 4);
-                const noRatingSpaces = mergedData.filter(space => space.rating === 0);
-
-                // Shuffle each group
-                const shuffledBestRated = shuffleArray(bestRatedSpaces);
-                const shuffledRatedBelow4 = shuffleArray(ratedBelow4Spaces);
-                const shuffledNoRating = shuffleArray(noRatingSpaces);
-
-                // Combine the shuffled groups in the desired order
-                const finalData = [...shuffledBestRated, ...shuffledRatedBelow4, ...shuffledNoRating];
-
-                console.log('Final merged data:', finalData); // Log final data
-                setSpaces(finalData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                setLoading(false);
+            if (selectedIsland !== 'all') {
+                data = data.filter(space => space.island_id === selectedIsland);
             }
+
+            if (selectedSpaceTypes.length > 0) {
+                data = data.filter(space => space.space_type && selectedSpaceTypes.includes(space.space_type.id));
+            }
+
+            if (selectedModalities.length > 0) {
+                data = data.filter(space => space.modalities && space.modalities.some(modality => selectedModalities.includes(modality.id)));
+            }
+
+            if (selectedServices.length > 0) {
+                data = data.filter(space => space.services && space.services.some(service => selectedServices.includes(service.id)));
+            }
+
+            data = data.filter(space => {
+                const rating = space.rating;
+                return rating >= ratingRange[0] && rating <= ratingRange[1];
+            });
+
+            if (searchQuery.trim()) {
+                data = data.filter(space => space.title.toLowerCase().includes(searchQuery.toLowerCase()));
+            }
+
+            const bestRatedSpaces = data.filter(space => space.rating >= 4);
+            const ratedBelow4Spaces = data.filter(space => space.rating > 0 && space.rating < 4);
+            const noRatingSpaces = data.filter(space => space.rating === 0);
+
+            const shuffledBestRated = shuffleArray(bestRatedSpaces);
+            const shuffledRatedBelow4 = shuffleArray(ratedBelow4Spaces);
+            const shuffledNoRating = shuffleArray(noRatingSpaces);
+
+            const finalData = [...shuffledBestRated, ...shuffledRatedBelow4, ...shuffledNoRating];
+            setFilteredSpaces(finalData);
         };
 
-        // Add debouncing for search queries
         const timeoutId = setTimeout(() => {
-            fetchSpaces();
+            filterSpaces();
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange]);
+    }, [searchQuery, selectedIsland, selectedSpaceTypes, selectedModalities, selectedServices, ratingRange, allSpaces]);
 
-    // Load more cards dynamically based on screen size
     const loadMore = () => {
-        setIsLoadingMore(true); // Show loader
+        setIsLoadingMore(true);
         setTimeout(() => {
             const cardsToLoad = getCardsToLoad();
             setVisibleCount((prevCount) => prevCount + cardsToLoad);
-            setIsLoadingMore(false); // Hide loader
-        }, 1000); // Simulate a delay for loading (1 second)
+            setIsLoadingMore(false);
+        }, 1000);
     };
 
-    // Intersection Observer to detect when the sentinel is in view
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && visibleCount < spaces.length) {
-                    loadMore(); // Load more cards when sentinel is in view
+                if (entries[0].isIntersecting && visibleCount < filteredSpaces.length) {
+                    loadMore();
                 }
             },
-            { threshold: 1.0 } // Trigger when the sentinel is fully visible
+            { threshold: 1.0 }
         );
 
         if (sentinelRef.current) {
-            observer.observe(sentinelRef.current); // Observe the sentinel element
+            observer.observe(sentinelRef.current);
         }
 
         return () => {
             if (sentinelRef.current) {
-                observer.unobserve(sentinelRef.current); // Cleanup observer
+                observer.unobserve(sentinelRef.current);
             }
         };
-    }, [visibleCount, spaces.length]); // Re-run when visibleCount or spaces.length changes
+    }, [visibleCount, filteredSpaces.length]);
 
     if (loading) {
         return (
@@ -214,19 +143,7 @@ function ListSpace() {
 
     return (
         <div className="flex flex-col items-center w-full mt-4">
-            {/* Show loading state */}
-            {loading && (
-                <div className="loader">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            )}
-            {/* Show no results message */}
-            {!loading && spaces.length === 0 && (
+            {!loading && filteredSpaces.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -251,29 +168,25 @@ function ListSpace() {
                 </div>
             )}
 
-            {/* Show results if we have any */}
-            {!loading && spaces.length > 0 && (
+            {!loading && filteredSpaces.length > 0 && (
                 <>
-                    <div
-                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
-                        {spaces.slice(0, visibleCount).map((item) => (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full">
+                        {filteredSpaces.slice(0, visibleCount).map((item) => (
                             <div key={item.id} onClick={() => handleCardClick(item.id)}>
                                 <Card
                                     images={item.images}
                                     title={item.title}
-                                    description={item.description}
+                                    description={item.location}
                                     rating={item.rating}
                                 />
                             </div>
                         ))}
                     </div>
 
-                    {/* Sentinel element for infinite scroll */}
-                    {spaces.length > visibleCount && (
+                    {filteredSpaces.length > visibleCount && (
                         <div ref={sentinelRef} className="h-10"></div>
                     )}
 
-                    {/* Loading more indicator */}
                     {isLoadingMore && (
                         <div className="loader mt-6 mb-6">
                             <span></span>

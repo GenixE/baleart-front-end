@@ -2,25 +2,14 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation, Pagination} from 'swiper/modules';
 
 const Card = ({images, title, description, rating}) => {
-    const handleCardClick = () => {
-        // Navigation logic for later
-        console.log('Card clicked:', title);
-    };
-
     return (
         <div
-            onClick={handleCardClick}
             className="
         bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg
         transition duration-300 w-full cursor-pointer
       "
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    handleCardClick();
-                }
-            }}
         >
             <div className="aspect-square w-full relative">
                 <Swiper
