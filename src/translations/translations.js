@@ -6,7 +6,7 @@ export const translations = {
             CA: 'El meu compte'
         },
         subtitle: {
-            EN: 'Manage your settings settings.',
+            EN: 'Manage your settings.',
             ES: 'Administrar la configuración de su cuenta.',
             CA: 'Administrar la configuració del vostre compte.'
         },
@@ -75,7 +75,7 @@ export const translations = {
             CA: 'Inici de sessió i seguretat'
         },
         description: {
-            EN: 'Update your password and secure your settings.',
+            EN: 'Update your password and secure your account.',
             ES: 'Actualizar su contraseña y asegure su cuenta.',
             CA: 'Actualitzar la vostra contrasenya i assegureu el vostre compte.'
         },
@@ -100,7 +100,7 @@ export const translations = {
             CA: 'Confirmar nova contrasenya'
         },
         deleteAccount: {
-            EN: 'Delete settings',
+            EN: 'Delete account',
             ES: 'Borrar cuenta',
             CA: 'Esborrar compte'
         },
