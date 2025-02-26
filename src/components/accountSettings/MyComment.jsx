@@ -154,7 +154,7 @@ export const MyComment = () => {
                                     {/* Space Header */}
                                     <div className="flex items-center mb-6">
                                         <Link
-                                            to={`/spaces/${space.id}`}
+                                            to={`/space/${space.id}`}
                                             className="flex items-center hover:opacity-80"
                                         >
                                             <img

@@ -21,7 +21,7 @@ function ListSpace() {
     const sentinelRef = useRef(null);
 
     function getInitialVisibleCount() {
-        const screenWidth = window.innerWidth;
+        const screenWidth = window.innerWidth * window.devicePixelRatio;
         if (screenWidth >= 1536) return 6;
         if (screenWidth >= 1280) return 4;
         if (screenWidth >= 768) return 3;
@@ -170,13 +170,16 @@ function ListSpace() {
         };
     };
 
-    const debouncedLoadMore = debounce(loadMore, 300);
+    const debouncedLoadMore = debounce(loadMore, 100);
 
     useEffect(() => {
         if (filteredSpaces.length > 0) {
             const observer = new IntersectionObserver(
                 (entries) => {
+                    console.log("Intersection Observer triggered:", entries[0].isIntersecting);
                     if (entries[0].isIntersecting && visibleCount < filteredSpaces.length) {
+                        console.log("Loading more...");
+                        loadMore();
                         debouncedLoadMore();
                     }
                 },
@@ -184,16 +187,24 @@ function ListSpace() {
             );
 
             if (sentinelRef.current) {
+                console.log("Observing sentinel element");
                 observer.observe(sentinelRef.current);
             }
 
             return () => {
                 if (sentinelRef.current) {
+                    console.log("Unobserving sentinel element");
                     observer.unobserve(sentinelRef.current);
                 }
             };
         }
     }, [visibleCount, filteredSpaces.length]);
+
+    useEffect(() => {
+        if (filteredSpaces.length > 0) {
+            setVisibleCount(getInitialVisibleCount());
+        }
+    }, [filteredSpaces]);
 
     if (isLoading) {
         return (
