@@ -23,10 +23,10 @@ const ContactForm = () => {
         // Disable the submit button to prevent spamming
         setIsSubmitting(true);
 
-        const SERVICE_ID = 'service_de7zaoc';
-        const TEMPLATE_ID = 'template_p67pv5n';
-        const AUTOREPLY_TEMPLATE_ID = 'template_4shu2y1';
-        const USER_ID = 'ldEv3ChqooxIHs22_';
+        const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
+        const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID;
+        const AUTOREPLY_TEMPLATE_ID = import.meta.env.VITE_AUTOREPLY_TEMPLATE_ID;
+        const USER_ID = import.meta.env.VITE_USER_ID;
 
         // Send email to your team
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target, USER_ID)
@@ -41,7 +41,6 @@ const ContactForm = () => {
                     greeting: translations.emailResponse.greeting[language],
                     thankYouMessage: translations.emailResponse.thankYouMessage[language],
                     yourMessageLabel: translations.emailResponse.yourMessageLabel[language],
-                    responseMessage: translations.emailResponse.responseMessage[language],
                     footerMessage: translations.emailResponse.footerMessage[language],
                     bestRegards: translations.emailResponse.bestRegards[language],
                 };
