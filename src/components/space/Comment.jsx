@@ -2,6 +2,11 @@ import {FiChevronLeft, FiChevronRight} from 'react-icons/fi';
 import {useState} from "react";
 
 const Comment = ({comment, openModal}) => {
+    // If comment status is 'n', don't render anything
+    if (comment.status === 'n') {
+        return null;
+    }
+
     const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
     const images = comment.images || [];
     const imagesPerGroup = 4;
